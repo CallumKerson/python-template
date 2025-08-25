@@ -17,13 +17,26 @@ template = Path(__file__).parent.parent.resolve()
             "defaults": True,
             "expected_project_name": "test-project",
             "expected_package_name": "test_project",
+            "expected_description": "A cool new Python project",
         },
         {
             "name": "custom_project_name",
             "data": {"project_name": "my-cool-app"},
-            "defaults": False,
+            "defaults": True,
             "expected_project_name": "my-cool-app",
             "expected_package_name": "my_cool_app",
+            "expected_description": "A cool new Python project",
+        },
+        {
+            "name": "custom_both",
+            "data": {
+                "project_name": "amazing-tool",
+                "project_description": "An amazing development tool",
+            },
+            "defaults": True,
+            "expected_project_name": "amazing-tool",
+            "expected_package_name": "amazing_tool",
+            "expected_description": "An amazing development tool",
         },
     ],
 )
@@ -37,11 +50,14 @@ def test_template_generation(tmp_path: Path, test_case: dict) -> None:
         data=test_case["data"],
         defaults=test_case["defaults"],
         unsafe=True,
+        vcs_ref="HEAD",
     )
 
     _assert_essential_files_exist(target)
     _assert_package_structure(target, test_case["expected_package_name"])
-    _assert_template_substitution(target, test_case["expected_project_name"])
+    _assert_template_substitution(
+        target, test_case["expected_project_name"], test_case["expected_description"]
+    )
 
 
 def _assert_essential_files_exist(target: Path) -> None:
@@ -71,11 +87,15 @@ def _assert_package_structure(target: Path, expected_package_name: str) -> None:
     )
 
 
-def _assert_template_substitution(target: Path, expected_project_name: str) -> None:
+def _assert_template_substitution(
+    target: Path, expected_project_name: str, expected_description: str
+) -> None:
     """Check that template variables were properly substituted."""
     pyproject_content = (target / "pyproject.toml").read_text()
     assert expected_project_name in pyproject_content
+    assert expected_description in pyproject_content
     assert "{{ project_name }}" not in pyproject_content
+    assert "{{ project_description }}" not in pyproject_content
 
     readme_content = (target / "README.md").read_text()
     assert expected_project_name in readme_content

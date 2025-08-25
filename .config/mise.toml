@@ -32,14 +32,14 @@ sources = ["**/*.py", "pyproject.toml", "uv.lock"]
 
 [tasks."format:text"]
 outputs = { auto = true }
-run = "prettier . --write --ignore-path CHANGELOG.md"
+run = "prettier . --write --ignore-path=.config/.prettierignore --ignore-path=.gitignore"
 sources = ["**/*.md", "**/*.yaml"]
 
 [tasks."lint:text"]
 outputs = { auto = true }
 run = [
   "markdownlint-cli2 --config ./.config/.markdownlint-cli2.yaml \"**/*.md\"",
-  "prettier --check . --ignore-path CHANGELOG.md",
+  "prettier --check . --ignore-path=.config/.prettierignore --ignore-path=.gitignore",
   "yamllint -c .config/.yamllint.yaml .",
 ]
 sources = ["**/*.yaml"]

@@ -1,0 +1,49 @@
+[tools]
+copier = "latest"
+markdownlint-cli2 = "latest"
+prettier = "latest"
+taplo = "latest"
+uv = "latest"
+yamllint = "latest"
+
+[tasks.test]
+run = "uv run pytest"
+
+[tasks."format:python"]
+outputs = { auto = true }
+run = "uv run ruff format ."
+sources = ["**/*.py", "pyproject.toml", "uv.lock"]
+
+[tasks."lint:python"]
+outputs = { auto = true }
+run = "uv run ruff check . --fix --unsafe-fixes"
+sources = ["**/*.py", "pyproject.toml", "uv.lock"]
+
+[tasks."format:text"]
+outputs = { auto = true }
+run = "prettier . --write"
+sources = ["**/*.md", "**/*.yaml"]
+
+[tasks."lint:text"]
+outputs = { auto = true }
+run = [
+  "markdownlint-cli2 --config ./.config/.markdownlint-cli2.yaml \"**/*.md\"",
+  "prettier --check .",
+  "yamllint -c .config/.yamllint.yaml .",
+]
+sources = ["**/*.yaml"]
+
+[tasks."format:toml"]
+outputs = { auto = true }
+run = "taplo fmt --option reorder_keys=true --option reorder_arrays=true"
+sources = ["**/*.toml"]
+
+[tasks.format]
+depends = ["format:*"]
+
+[tasks.lint]
+depends = ["lint:*"]
+wait_for = ["format"]
+
+[tasks.pre-commit]
+depends = ["format", "lint"]

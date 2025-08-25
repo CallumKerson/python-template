@@ -1,6 +1,6 @@
 [project]
 dependencies = []
-description = "Add your description here"
+description = "A Copier template for Python with Mise"
 name = "python-template"
 readme = "README.md"
 requires-python = ">=3.12"

@@ -61,4 +61,3 @@ depends = ["format", "lint"]
 
 [tasks.ci]
 depends = ["lint", "test"]
-

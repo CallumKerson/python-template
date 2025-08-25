@@ -7,11 +7,15 @@ project_name:
     {% if not (project_name | regex_search('^[a-z][a-z0-9\\-]+$')) %}
     project_name must start with a letter, followed one or more letters, digits or dashes all lowercase.
     {% endif %}
+project_description:
+  type: str
+  help: What is your project for?
+  default: A cool new Python project
 _subdirectory: template
 _answers_file: .template-answers.yaml
-_tasks:
-  - "mise trust ./.config/mise.toml"
-  - "mise install"
-  - "uv lock"
-  - "mise run --force format"
-  - "mise run --force lint"
+# _tasks:
+#   - "mise trust ./.config/mise.toml"
+#   - "mise install"
+#   - "uv lock"
+#   - "mise run --force format"
+#   - "mise run --force lint"

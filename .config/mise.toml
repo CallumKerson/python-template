@@ -1,6 +1,7 @@
 [tools]
 copier = "latest"
 markdownlint-cli2 = "latest"
+"npm:release-please" = "latest"
 prettier = "latest"
 taplo = "latest"
 uv = "latest"
@@ -57,3 +58,7 @@ wait_for = ["format"]
 
 [tasks.pre-commit]
 depends = ["format", "lint"]
+
+[tasks.ci]
+depends = ["lint", "test"]
+

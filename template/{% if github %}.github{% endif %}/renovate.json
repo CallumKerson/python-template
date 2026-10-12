@@ -9,7 +9,6 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Keep the hk.pkl package version in step with hk",
       "managerFilePatterns": ["/(^|/)hk\\.pkl$/"],
       "matchStrings": [
         "releases/download/v(?<currentValue>[^/]+)/hk@",

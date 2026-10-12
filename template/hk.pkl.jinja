@@ -5,7 +5,7 @@ import "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Builtin
 min_hk_version = "LATEST"
 {%- if github %}
 
-// .mise/locks holds the lockfiles mise writes for npm tools like oxfmt
+// mise lock writes .mise/locks
 exclude = List(".mise/locks/**", "CHANGELOG.md", "LICENSE")
 {%- endif %}
 
@@ -22,7 +22,7 @@ local linters = new Mapping<String, Step> {
   ["detect_private_key"] = Builtins.detect_private_key
   ["fix_smart_quotes"] = Builtins.fix_smart_quotes
 {%- if github %}
-  // oxfmt formats many languages; only JSON isn't covered by another linter
+  // Other file types have their own linters
   ["json"] = (Builtins.oxfmt) {
     glob = List("**/*.json", "**/*.jsonc")
   }

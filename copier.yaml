@@ -32,6 +32,14 @@ python_version:
   help: What is the minimum Python version?
   default: "3.14"
 
+project_type:
+  type: str
+  help: What kind of project is it?
+  choices:
+    Library: library
+    CLI app (cyclopts): cli
+  default: library
+
 _subdirectory: template
 _answers_file: .copier-answers.yaml
 

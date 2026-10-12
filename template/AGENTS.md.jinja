@@ -1,6 +1,11 @@
 # AGENTS.md
 
 {{ (project_description ~ ".") | wordwrap(80, break_long_words=False, break_on_hyphens=False) }}
+{%- if project_type == 'cli' %}
+
+The `{{ project_name }}` CLI is built with
+[cyclopts](https://cyclopts.readthedocs.io).
+{%- endif %}
 
 ## Commands
 
@@ -8,12 +13,23 @@
 - `mise run check-all` runs all linters, formatters and type checks through hk;
   `mise run fix-all` applies fixes. Run both checks and tests before
   committing.
+{%- if project_type == 'cli' %}
+- `uv run {{ project_name }} <args>` runs the CLI.
+{%- else %}
 - `mise run build` builds the sdist and wheel into `dist/`.
+{%- endif %}
 
 ## Layout
-
+{% if project_type == 'cli' %}
+- `src/{{ package_name }}/cli.py`: the cyclopts `app`, exposed as the
+  `{{ project_name }}` script in `pyproject.toml`. Add commands with
+  `@app.command`.
+- `tests/`: pytest tests. Call `app([...])` with CLI tokens; it exits via
+  `SystemExit`, so wrap calls in `pytest.raises(SystemExit)`.
+{%- else %}
 - `src/{{ package_name }}/`: the package.
 - `tests/`: pytest tests.
+{%- endif %}
 
 ## Tooling
 

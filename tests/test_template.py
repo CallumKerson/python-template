@@ -73,9 +73,10 @@ def tool_version(value: str | dict) -> str:
     return value["version"] if isinstance(value, dict) else value
 
 
-def test_copy(template: Path, tmp_path: Path) -> None:
+@pytest.mark.parametrize("project_type", ["library", "cli"])
+def test_copy(template: Path, tmp_path: Path, project_type: str) -> None:
     project = tmp_path / "demo-app"
-    generate(template, project)
+    generate(template, project, project_type=project_type)
 
     # Every placeholder is pinned
     versions = [tool_version(v) for v in mise_tools(project).values()]
@@ -83,7 +84,7 @@ def test_copy(template: Path, tmp_path: Path) -> None:
     assert "LATEST" not in (project / "hk.pkl").read_text()
     pyproject = tomllib.loads((project / "pyproject.toml").read_text())
     assert re.fullmatch(r"uv_build>=\d+\.\d+\.0,<\d+\.\d+\.0", pyproject["build-system"]["requires"][0])
-    requirements = pyproject["dependency-groups"]["dev"]
+    requirements = pyproject["project"]["dependencies"] + pyproject["dependency-groups"]["dev"]
     assert all(">=" in r for r in requirements), requirements
     assert (project / "mise.lock").is_file()
     assert (project / ANSWERS_FILE).is_file()
@@ -92,6 +93,8 @@ def test_copy(template: Path, tmp_path: Path) -> None:
     shutil.rmtree(project / ".venv")
     run(project, "mise", "run", "check-all")
     run(project, "mise", "run", "test")
+    if project_type == "cli":
+        assert run(project, "uv", "run", "demo-app", "hello", "--name", "Ada") == "Hello, Ada!\n"
 
 
 def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:

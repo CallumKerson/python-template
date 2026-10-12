@@ -1,0 +1,115 @@
+"""
+Generate projects from the template and check they work.
+
+These run the template's tasks for real, so they need mise and network access.
+"""
+
+import re
+import shutil
+import subprocess
+import tomllib
+from pathlib import Path
+
+import pytest
+from copier import run_copy, run_update
+
+TEMPLATE = Path(__file__).parent.parent
+ANSWERS_FILE = ".config/copier-answers.yaml"
+IGNORED = shutil.ignore_patterns(".git", ".venv", "*_cache", "__pycache__")
+
+
+def run(cwd: Path, *args: str) -> str:
+    """Run a command in cwd, returning its output."""
+    result = subprocess.run(args, cwd=cwd, check=False, capture_output=True, text=True)
+    assert result.returncode == 0, f"{' '.join(args)} failed:\n{result.stdout}\n{result.stderr}"
+    return result.stdout
+
+
+def commit_all(repo: Path, message: str) -> None:
+    """Commit every change in repo, skipping hooks."""
+    run(repo, "git", "add", "--all")
+    run(repo, "git", "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qnm", message)
+
+
+@pytest.fixture(autouse=True)
+def _outside_virtual_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stop uv and ty in generated projects using this repo's virtual environment."""
+    monkeypatch.delenv("VIRTUAL_ENV", raising=False)
+
+
+@pytest.fixture
+def template(tmp_path: Path) -> Path:
+    """Return a git repository holding the template's working tree, tagged v1.0.0."""
+    repo = tmp_path / "template"
+    shutil.copytree(TEMPLATE, repo, ignore=IGNORED)
+    run(repo, "git", "init", "-q")
+    commit_all(repo, "feat: template")
+    run(repo, "git", "tag", "v1.0.0")
+    return repo
+
+
+def generate(template: Path, project: Path, **data: object) -> None:
+    """Generate a project from the template with default answers."""
+    run_copy(str(template), project, data={"project_name": "demo-app", **data}, defaults=True, unsafe=True)
+    commit_all(project, "feat: initial commit")
+
+
+def mise_tools(project: Path) -> dict:
+    """Return the [tools] table of the project's mise.toml."""
+    return tomllib.loads((project / "mise.toml").read_text())["tools"]
+
+
+def tool_version(value: str | dict) -> str:
+    """Return the version of a mise [tools] entry, which may be a table."""
+    return value["version"] if isinstance(value, dict) else value
+
+
+def test_copy(template: Path, tmp_path: Path) -> None:
+    project = tmp_path / "demo-app"
+    generate(template, project)
+
+    # Every placeholder is pinned
+    versions = [tool_version(v) for v in mise_tools(project).values()]
+    assert all(re.fullmatch(r"\d+(\.\d+)+", v) for v in versions), versions
+    assert "LATEST" not in (project / "hk.pkl").read_text()
+    pyproject = tomllib.loads((project / "pyproject.toml").read_text())
+    assert re.fullmatch(r"uv_build>=\d+\.\d+\.0,<\d+\.\d+\.0", pyproject["build-system"]["requires"][0])
+    requirements = pyproject["dependency-groups"]["dev"]
+    assert all(">=" in r for r in requirements), requirements
+    assert (project / "mise.lock").is_file()
+    assert (project / ANSWERS_FILE).is_file()
+
+    # The generated project passes its own checks and tests
+    run(project, "mise", "run", "check-all")
+    run(project, "mise", "run", "test")
+
+
+def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
+    project = tmp_path / "demo-app"
+    generate(template, project)
+
+    # The project manages its own versions
+    mise_toml = project / "mise.toml"
+    pinned_ruff = mise_tools(project)["ruff"]
+    mise_toml.write_text(mise_toml.read_text().replace(f'ruff = "{pinned_ruff}"', 'ruff = "0.15.0"'))
+    pyproject = project / "pyproject.toml"
+    pyproject.write_text(pyproject.read_text().replace("dev = [\n", 'dev = [\n  "pytest-cov>=7.0.0",\n'))
+    commit_all(project, "build: pin ruff and add pytest-cov")
+
+    # The template adds a tool and changes another file
+    tools = template / "template/mise.toml.jinja"
+    tools.write_text(tools.read_text().replace('ruff = "latest"\n', 'ruff = "latest"\nshellcheck = "latest"\n'))
+    readme = template / "template/README.md.jinja"
+    readme.write_text(readme.read_text() + "\nA new paragraph from the template.\n")
+    commit_all(template, "feat: add shellcheck")
+    run(template, "git", "tag", "v2.0.0")
+
+    run_update(project, answers_file=ANSWERS_FILE, defaults=True, overwrite=True, unsafe=True)
+
+    tools = mise_tools(project)
+    assert tools["ruff"] == "0.15.0"
+    assert re.fullmatch(r"\d+(\.\d+)+", tools["shellcheck"])
+    assert '"pytest-cov>=7.0.0"' in pyproject.read_text()
+    assert "A new paragraph from the template." in (project / "README.md").read_text()
+    assert not list(project.rglob("*.rej"))
+    assert "<<<<<<<" not in mise_toml.read_text() + pyproject.read_text()

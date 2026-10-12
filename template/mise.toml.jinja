@@ -1,0 +1,49 @@
+[tools]
+"aqua:owenlamont/ryl" = "latest"
+hk = "latest"
+pkl = "latest"
+ruff = "latest"
+rumdl = "latest"
+tombi = "latest"
+ty = "latest"
+typos = "latest"
+uv = "latest"
+{%- if uv_auto_sync %}
+
+[deps.uv]
+auto = true
+{%- endif %}
+
+[tasks.check]
+description = "Run all linter and formatter checks with hk against changed files"
+run = "hk check --no-fail-fast"
+
+[tasks.check-all]
+description = "Run all linter and formatter checks with hk against all files"
+run = "hk check --all --no-fail-fast"
+
+[tasks.fix]
+description = "Fix all linter and formatter issues with hk against changed files"
+run = "hk fix --no-fail-fast"
+
+[tasks.fix-all]
+description = "Fix all linter and formatter issues with hk against all files"
+run = "hk fix --all --no-fail-fast"
+
+[tasks.test]
+description = "Run tests with pytest"
+run = "uv run pytest"
+
+[tasks.update-template]
+description = "Pull in changes from the python-template copier template"
+run = "uvx copier update --trust --skip-answered --answers-file .config/copier-answers.yaml"
+
+[tasks.build]
+description = "Build the sdist and wheel into dist/"
+run = ["rm -rf dist", "uv build"]
+
+[settings]
+lockfile = true
+{%- if uv_auto_sync %}
+experimental = true
+{%- endif %}

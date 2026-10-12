@@ -1,2 +1,6 @@
+[default.extend-words]
+# ruff rule prefix in pyproject.toml.jinja
+CPY = "CPY"
+
 [files]
 extend-exclude = ["CHANGELOG.md", "*.lock"]

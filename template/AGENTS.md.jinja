@@ -1,0 +1,28 @@
+# AGENTS.md
+
+{{ project_description }}.
+
+## Commands
+
+- `mise run test` (or `uv run pytest`) runs the tests.
+- `mise run check-all` runs all linters, formatters and type checks through hk;
+  `mise run fix-all` applies fixes. Run both checks and tests before
+  committing.
+- `mise run build` builds the sdist and wheel into `dist/`.
+
+## Layout
+
+- `src/{{ package_name }}/`: the package.
+- `tests/`: pytest tests.
+
+## Tooling
+
+- mise manages tools; uv manages Python and dependencies.
+- hk (`hk.pkl`) runs ruff, ty, rumdl (Markdown), ryl (YAML), tombi (TOML),
+  typos and file hygiene checks as a pre-commit hook, and checks commit
+  messages follow conventional commits.
+- There is no CI; hk hooks are the only gate.
+- Tool and dependency versions belong to this repo. The
+  [python-template](https://github.com/CallumKerson/python-template) copier
+  template only adds new tools unversioned; `mise run update-template` pulls
+  template changes and pins anything new.

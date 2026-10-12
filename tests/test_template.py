@@ -73,10 +73,11 @@ def tool_version(value: str | dict) -> str:
     return value["version"] if isinstance(value, dict) else value
 
 
+@pytest.mark.parametrize("github", [False, True], ids=["local", "github"])
 @pytest.mark.parametrize("project_type", ["library", "cli"])
-def test_copy(template: Path, tmp_path: Path, project_type: str) -> None:
+def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool) -> None:
     project = tmp_path / "demo-app"
-    generate(template, project, project_type=project_type)
+    generate(template, project, project_type=project_type, github=github)
 
     # Every placeholder is pinned
     versions = [tool_version(v) for v in mise_tools(project).values()]
@@ -88,6 +89,9 @@ def test_copy(template: Path, tmp_path: Path, project_type: str) -> None:
     assert all(">=" in r for r in requirements), requirements
     assert (project / "mise.lock").is_file()
     assert (project / ANSWERS_FILE).is_file()
+    assert (project / ".github").is_dir() == github
+    if github:
+        assert "@v" not in (project / ".github/workflows/ci.yaml").read_text().replace("# v", "")
 
     # The generated project passes its own checks and tests, even from a fresh clone
     shutil.rmtree(project / ".venv")

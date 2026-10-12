@@ -17,6 +17,7 @@ MISE_TOML = Path("mise.toml")
 HK_PKL = Path("hk.pkl")
 PYPROJECT = Path("pyproject.toml")
 UV_LOCK = Path("uv.lock")
+WORKFLOWS = Path(".github/workflows")
 
 
 def run(*args: str) -> str:
@@ -99,6 +100,9 @@ def main() -> None:
     pin_hk_pkl()
     pin_uv_build()
     pin_python_dependencies()
+    if WORKFLOWS.is_dir():
+        # Pins actions given by tag, e.g. actions/checkout@v6, to their commit
+        run("mise", "exec", "--", "pinact", "run")
     run("mise", "lock")
 
 

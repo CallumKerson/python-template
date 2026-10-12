@@ -17,15 +17,17 @@ tasks, and `template/` is what gets copied.
 
 - Never put a version in `template/`. Tools are `"latest"` in
   `template/mise.toml.jinja`, hk's package version is `LATEST` in
-  `template/hk.pkl.jinja`, and Python dependencies are bare names.
-  The generated project's `mise run pin` (`template/.mise/tasks/pin.py`) pins
-  them. Changing those lines later would conflict with versions projects have
-  since pinned.
+  `template/hk.pkl.jinja`, Python dependencies are bare names, and GitHub
+  Actions use major tags (`@v6`). The generated project's `mise run pin`
+  (`template/.mise/tasks/pin.py`) pins them, using pinact for actions.
+  Changing those lines later would conflict with versions projects have since
+  pinned.
 - Don't add copier `_tasks`: they make copier and Renovate need `--trust`.
 - Write each mise tool as its own `[tools.<name>]` table, so `copier update`
   can add or remove one without conflicting with neighbouring pins.
 - Renovate ignores `template/`; this repo's own tools in `.config/mise.toml`
   are pinned and updated by Renovate.
-- Files ending `.jinja` are rendered; others are copied as they are.
+- Files ending `.jinja` are rendered; others are copied as they are, so GitHub
+  workflow `${{ }}` expressions only need escaping in `.jinja` files.
 - Generated projects must pass their own `mise run check-all` and
   `mise run test` straight after copying.

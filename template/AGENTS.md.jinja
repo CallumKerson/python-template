@@ -38,7 +38,13 @@ The `{{ project_name }}` CLI is built with
 - hk (`hk.pkl`) runs ruff, ty, rumdl (Markdown), ryl (YAML), tombi (TOML),
   typos and file hygiene checks as a pre-commit hook, and checks commit
   messages follow conventional commits.
+{%- if github %}
+- GitHub Actions runs `mise run ci` on pull requests and `main`. Renovate
+  updates dependencies, and release-please makes releases from conventional
+  commits.
+{%- else %}
 - There is no CI; hk hooks are the only gate.
+{%- endif %}
 - Tool and dependency versions belong to this repo. The
   [python-template](https://github.com/CallumKerson/python-template) copier
   template only adds new tools unversioned; `mise run update-template` pulls

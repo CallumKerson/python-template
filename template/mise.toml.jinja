@@ -18,6 +18,26 @@ run = "hk check --no-fail-fast"
 [tasks.check-all]
 description = "Run all linter and formatter checks with hk against all files"
 run = "hk check --all --no-fail-fast"
+{%- if github %}
+
+[tasks.check-auto]
+description = "Check all files on main, or only changed files on other branches"
+run = '''
+if [ "$(git branch --show-current)" = "main" ]; then
+  mise run check-all
+else
+  mise run check-pr
+fi
+'''
+
+[tasks.check-pr]
+description = "Run all checks against files changed since main"
+run = ["git fetch origin main", "hk check --from-ref origin/main --to-ref HEAD --no-fail-fast"]
+
+[tasks.ci]
+description = "Run the checks and tests CI runs"
+depends = ["check-auto", "test"]
+{%- endif %}
 
 [tasks.fix]
 description = "Fix all linter and formatter issues with hk against changed files"
@@ -26,6 +46,12 @@ run = "hk fix --no-fail-fast"
 [tasks.fix-all]
 description = "Fix all linter and formatter issues with hk against all files"
 run = "hk fix --all --no-fail-fast"
+{%- if github %}
+
+[tasks.fix-pr]
+description = "Fix issues in files changed since main"
+run = ["git fetch origin main", "hk fix --from-ref origin/main --to-ref HEAD --no-fail-fast"]
+{%- endif %}
 
 [tasks.setup]
 description = "Pin versions and install the git hooks in a new project"
@@ -39,11 +65,30 @@ run = "uv run pytest"
 description = "Pull in changes from the python-template copier template"
 run = ["uvx copier update --skip-answered --answers-file .copier-answers.yaml", "mise run pin"]
 
+{% if github -%}
+[tools.actionlint]
+version = "latest"
+
+{% endif -%}
 [tools."aqua:owenlamont/ryl"]
 version = "latest"
+{%- if github %}
+
+[tools.aube]
+version = "latest"
+{%- endif %}
 
 [tools.hk]
 version = "latest"
+{%- if github %}
+
+[tools.oxfmt]
+version = "latest"
+depends = ["aube"]
+
+[tools.pinact]
+version = "latest"
+{%- endif %}
 
 [tools.pkl]
 version = "latest"
@@ -53,6 +98,11 @@ version = "latest"
 
 [tools.rumdl]
 version = "latest"
+{%- if github %}
+
+[tools.shellcheck]
+version = "latest"
+{%- endif %}
 
 [tools.tombi]
 version = "latest"
@@ -65,3 +115,8 @@ version = "latest"
 
 [tools.uv]
 version = "latest"
+{%- if github %}
+
+[tools.zizmor]
+version = "latest"
+{%- endif %}

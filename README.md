@@ -19,7 +19,8 @@ It asks for:
 
 - the project's name, description and author;
 - the minimum Python version;
-- whether it's a library or a [cyclopts](https://cyclopts.readthedocs.io) CLI.
+- whether it's a library or a [cyclopts](https://cyclopts.readthedocs.io) CLI;
+- whether to add GitHub CI, Renovate and release-please.
 
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.
@@ -67,6 +68,12 @@ Changes beside the versions in `hk.pkl` or `pyproject.toml` can still
 conflict.
 
 When adding a tool or dependency to the template, add it unversioned.
+
+## Renovate
+
+Generated projects with GitHub on use Renovate's copier manager to open a pull
+request for each new template release. Renovate has no mise, so anything new
+from the template stays unpinned until `mise run pin` runs locally.
 
 ## Development
 

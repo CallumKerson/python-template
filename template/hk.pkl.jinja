@@ -3,8 +3,16 @@ amends "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Config.
 import "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Builtins.pkl"
 
 min_hk_version = "LATEST"
+{%- if github %}
+
+// .mise/locks holds the lockfiles mise writes for npm tools like oxfmt
+exclude = List(".mise/locks/**", "CHANGELOG.md", "LICENSE")
+{%- endif %}
 
 local linters = new Mapping<String, Step> {
+{%- if github %}
+  ["actionlint"] = Builtins.actionlint
+{%- endif %}
   ["byte_order_marker"] = Builtins.byte_order_marker
   ["check_added_large_files"] = Builtins.check_added_large_files
   ["check_case_conflict"] = Builtins.check_case_conflict
@@ -13,8 +21,17 @@ local linters = new Mapping<String, Step> {
   ["check_symlinks"] = Builtins.check_symlinks
   ["detect_private_key"] = Builtins.detect_private_key
   ["fix_smart_quotes"] = Builtins.fix_smart_quotes
+{%- if github %}
+  // oxfmt formats many languages; only JSON isn't covered by another linter
+  ["json"] = (Builtins.oxfmt) {
+    glob = List("**/*.json", "**/*.jsonc")
+  }
+{%- endif %}
   ["mixed_line_ending"] = Builtins.mixed_line_ending
   ["newlines"] = Builtins.newlines
+{%- if github %}
+  ["pinact"] = Builtins.pinact
+{%- endif %}
   ["pkl"] = Builtins.pkl
   ["pkl_format"] = Builtins.pkl_format
   ["python_check_ast"] = Builtins.python_check_ast
@@ -28,6 +45,9 @@ local linters = new Mapping<String, Step> {
   ["ty"] = Builtins.ty
   ["typos"] = Builtins.typos
   ["yaml"] = Builtins.ryl
+{%- if github %}
+  ["zizmor"] = Builtins.zizmor
+{%- endif %}
 }
 
 local commit_message_check = new Mapping<String, Step> {

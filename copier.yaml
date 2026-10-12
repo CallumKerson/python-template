@@ -40,6 +40,11 @@ project_type:
     CLI app (cyclopts): cli
   default: library
 
+github:
+  type: bool
+  help: Use GitHub CI, Renovate and release-please?
+  default: false
+
 _subdirectory: template
 _answers_file: .copier-answers.yaml
 

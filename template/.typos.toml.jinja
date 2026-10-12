@@ -1,2 +1,2 @@
 [files]
-extend-exclude = ["*.lock"]
+extend-exclude = [{% if github %}"CHANGELOG.md", {% endif %}"*.lock"]

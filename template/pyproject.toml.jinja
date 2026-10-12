@@ -19,46 +19,39 @@ build-backend = "uv_build"
 [tool.pytest]
 testpaths = ["tests"]
 
-# https://docs.astral.sh/ruff/rules/
 [tool.ruff]
 line-length = 120
 lint.ignore = [
-  "COM812",  # Interferes with formatter
-  "D203",  # Must choose between D203 and D211
-  "D212",  # Must choose between D212 and D213
-  "EXE003",  # Can use uv as the shebang
-  "ISC001",  # Interferes with formatter
-  "CPY001",  # No copyright notice in source files
+  "COM812",  # Conflicts with the formatter
+  "D203",  # Conflicts with D211
+  "D212",  # Conflicts with D213
+  "EXE003",  # Allows uv in shebangs
+  "ISC001",  # Conflicts with the formatter
+  "CPY001",  # No copyright headers
 ]
 lint.select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
-# Ignore in all directories named `tests`.
 "tests/**" = [
-  "D100",  # Test modules are self-documenting
-  "D103",  # Test function names are self-documenting
+  "D100",  # Tests are self-documenting
+  "D103",  # Tests are self-documenting
   "INP001",  # Tests are not a package
-  "PLR0913",  # Allow many arguments for mocking
-  "PLR2004",  # Allow magic numbers for asserts
-  "PT011",  # Allows testing for errors
+  "PLR0913",  # Fixtures and mocks need many arguments
+  "PLR2004",  # Magic numbers in asserts
+  "PT011",  # Broad pytest.raises
   "S101",  # Asserts are required in tests
-  "S105",  # Passwords in tests have dummy values
-  "S106",  # Passwords in tests have dummy values
-  "FBT001",  # Allow booleans in tests to work with parameterisation
+  "S105",  # Dummy passwords
+  "S106",  # Dummy passwords
+  "FBT001",  # Boolean parameters from parametrize
 ]
 
-# https://docs.astral.sh/ruff/settings/#isort
 [tool.ruff.lint.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
 
-# https://docs.astral.sh/ruff/settings/#mccabe
 [tool.ruff.lint.mccabe]
-# Arbitrary to 2 bytes, same as SonarLint
 max-complexity = 15
 
 [tool.ruff.lint.pylint]
-# Arbitrary to 1 byte, same as SonarLint
 max-args = 7
-# At least same as max-complexity
 max-branches = 15

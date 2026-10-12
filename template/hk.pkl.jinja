@@ -46,7 +46,6 @@ hooks {
   ["commit-msg"] {
     steps = commit_message_check
   }
-  // "fix" and "check" are special steps for `hk fix` and `hk check` commands
   ["fix"] {
     fix = true
     steps = linters

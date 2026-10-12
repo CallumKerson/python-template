@@ -1,5 +1,4 @@
-# Sort the [tools] table alphabetically. Ordering rules are only available on
-# schema-matched documents, so mise's schema has to be associated explicitly.
+# tombi only sorts [tools] when mise's schema is set explicitly
 [[schemas]]
 path = "https://mise.jdx.dev/schema/mise.json"
 include = ["mise.toml"]

@@ -1,8 +1,0 @@
----
-default: true
-gitignore: true
-ignores:
-  - CHANGELOG.md
-
-MD013:
-  line_length: 120

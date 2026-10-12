@@ -1,10 +1,43 @@
 [project]
-dependencies = []
-description = "A Copier template for Python with Mise"
 name = "python-template"
-readme = "README.md"
-requires-python = ">=3.12"
 version = "0.2.0"
+description = "A copier template for Python projects using uv, mise and hk"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
 
-[dependency-groups]
-dev = ["copier>=9.9.1", "pytest>=8.4.1", "ruff>=0.12.10"]
+# https://docs.astral.sh/ruff/rules/
+[tool.ruff]
+line-length = 120
+extend-exclude = ["template"]
+lint.ignore = [
+  "COM812",  # Interferes with formatter
+  "D203",  # Must choose between D203 and D211
+  "D212",  # Must choose between D212 and D213
+  "EXE003",  # Can use uv as the shebang
+  "ISC001",  # Interferes with formatter
+  "CPY001",  # No copyright notice in source files
+  "INP001",  # Tasks and tests are scripts, not packages
+  "S603",  # Commands are built from fixed arguments
+  "S607",  # Tools are found on PATH through mise
+  "T201",  # Tasks report what they pinned with print
+]
+lint.select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore in all directories named `tests`.
+"tests/**" = [
+  "D100",  # Test modules are self-documenting
+  "D103",  # Test function names are self-documenting
+  "PLR2004",  # Allow magic numbers for asserts
+  "S101",  # Asserts are required in tests
+  "FBT001",  # Allow booleans in tests to work with parameterisation
+]
+
+# https://docs.astral.sh/ruff/settings/#isort
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+
+[tool.uv]
+package = false

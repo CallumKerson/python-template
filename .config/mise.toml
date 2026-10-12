@@ -1,63 +1,53 @@
 [tools]
-copier = "latest"
-markdownlint-cli2 = "latest"
-"npm:release-please" = "latest"
-prettier = "latest"
-taplo = "latest"
-uv = "latest"
-yamllint = "latest"
+actionlint = "1.7.12"
+"aqua:owenlamont/ryl" = "0.24.0"
+aube = "2.7.0"
+hk = "2.5.0"
+oxfmt = { version = "0.72.0", depends = ["aube"] }
+pinact = "5.0.0"
+pkl = "0.32.1"
+ruff = "0.17.0"
+rumdl = "0.2.79"
+shellcheck = "0.11.0"
+tombi = "1.8.1"
+ty = "0.0.86"
+typos = "1.51.1"
+uv = "0.13.0"
+zizmor = "1.30.1"
 
-[tasks.test]
-outputs = { auto = true }
-run = "uv run pytest"
-sources = [
-  "*.jinja",
-  "copier.yaml",
-  "pyproject.toml",
-  "template/**/*",
-  "tests/**/*",
-  "uv.lock",
-]
-wait_for = ["format"]
+[tasks.check]
+description = "Run all linter and formatter checks with hk against changed files"
+run = "hk check --no-fail-fast"
 
-[tasks."format:python"]
-outputs = { auto = true }
-run = "uv run ruff format ."
-sources = ["**/*.py", "pyproject.toml", "uv.lock"]
+[tasks.check-all]
+description = "Run all linter and formatter checks with hk against all files"
+run = "hk check --all --no-fail-fast"
 
-[tasks."lint:python"]
-outputs = { auto = true }
-run = "uv run ruff check . --fix --unsafe-fixes"
-sources = ["**/*.py", "pyproject.toml", "uv.lock"]
+[tasks.fix]
+description = "Fix all linter and formatter issues with hk against changed files"
+run = "hk fix --no-fail-fast"
 
-[tasks."format:text"]
-outputs = { auto = true }
-run = "prettier . --write --ignore-path=.config/.prettierignore --ignore-path=.gitignore"
-sources = ["**/*.md", "**/*.yaml"]
+[tasks.fix-all]
+description = "Fix all linter and formatter issues with hk against all files"
+run = "hk fix --all --no-fail-fast"
 
-[tasks."lint:text"]
-outputs = { auto = true }
-run = [
-  "markdownlint-cli2 --config ./.config/.markdownlint-cli2.yaml \"**/*.md\"",
-  "prettier --check . --ignore-path=.config/.prettierignore --ignore-path=.gitignore",
-  "yamllint -c .config/.yamllint.yaml .",
-]
-sources = ["**/*.yaml"]
+[tasks.check-pr]
+description = "Run all checks against files changed since main"
+run = ["git fetch origin main", "hk check --from-ref origin/main --to-ref HEAD --no-fail-fast"]
 
-[tasks."format:toml"]
-outputs = { auto = true }
-run = "taplo fmt --option reorder_keys=true --option reorder_arrays=true"
-sources = ["**/*.toml"]
-
-[tasks.format]
-depends = ["format:*"]
-
-[tasks.lint]
-depends = ["lint:*"]
-wait_for = ["format"]
-
-[tasks.pre-commit]
-depends = ["format", "lint"]
+[tasks.check-auto]
+description = "Check all files on main, or only changed files on other branches"
+run = '''
+if [ "$(git branch --show-current)" = "main" ]; then
+  mise run check-all
+else
+  mise run check-pr
+fi
+'''
 
 [tasks.ci]
-depends = ["lint", "test"]
+description = "Run the checks and tests CI runs"
+depends = ["check-auto"]
+
+[settings]
+lockfile = true

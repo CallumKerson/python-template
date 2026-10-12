@@ -1,4 +1,5 @@
-name: release-please
+---
+name: Release
 
 on:
   push:
@@ -9,17 +10,13 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 jobs:
-  ci:
+  release:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    concurrency: release
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: .config/release-please-config.json
-          manifest-file: .config/.release-please-manifest.json
+          manifest-file: .config/release-please-manifest.json

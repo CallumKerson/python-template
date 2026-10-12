@@ -6,13 +6,23 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
+# The GitHub App's token does the writing, so release PRs trigger CI
+permissions: {}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     concurrency: release
     steps:
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
       - uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ steps.app-token.outputs.token }}

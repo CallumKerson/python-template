@@ -20,7 +20,9 @@ It asks for:
 - the project's name, description and author;
 - the minimum Python version;
 - whether it's a library or a [cyclopts](https://cyclopts.readthedocs.io) CLI;
-- whether to add GitHub CI, Renovate and release-please.
+- whether to add GitHub CI, Renovate and release-please. release-please uses
+  a GitHub App's token, read from the `RELEASE_APP_CLIENT_ID` variable and
+  `RELEASE_APP_PRIVATE_KEY` secret, so release pull requests run CI.
 
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0](https://github.com/CallumKerson/python-template/compare/v0.3.0...v0.4.0) (2026-10-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* the config files move, so updating an existing project conflicts wherever it changed them. Move them into .config/ before updating.
+
+### ✨ Features
+
+* cache uv's Python install in generated projects' workflows ([#22](https://github.com/CallumKerson/python-template/issues/22)) ([9444dce](https://github.com/CallumKerson/python-template/commit/9444dce35ddd16b978989fc307a6511685e7f6c3))
+* keep generated projects' tool config in .config ([#26](https://github.com/CallumKerson/python-template/issues/26)) ([6cf6bf1](https://github.com/CallumKerson/python-template/commit/6cf6bf12960d0d150c16e15cf4f345ab4c80e5e0))
+
+
+### 🐛 Bug Fixes
+
+* default the project name to the directory's name when copying into . ([#27](https://github.com/CallumKerson/python-template/issues/27)) ([9f2d7f8](https://github.com/CallumKerson/python-template/commit/9f2d7f8274f4659cecf2b327297d9eab1f768723))
+
 ## [0.3.0](https://github.com/CallumKerson/python-template/compare/v0.2.0...v0.3.0) (2026-10-13)
 
 

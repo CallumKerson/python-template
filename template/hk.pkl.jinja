@@ -1,0 +1,56 @@
+amends "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Builtins.pkl"
+
+min_hk_version = "LATEST"
+
+local linters = new Mapping<String, Step> {
+  ["byte_order_marker"] = Builtins.byte_order_marker
+  ["check_added_large_files"] = Builtins.check_added_large_files
+  ["check_case_conflict"] = Builtins.check_case_conflict
+  ["check_executables_have_shebangs"] = Builtins.check_executables_have_shebangs
+  ["check_merge_conflict"] = Builtins.check_merge_conflict
+  ["check_symlinks"] = Builtins.check_symlinks
+  ["detect_private_key"] = Builtins.detect_private_key
+  ["fix_smart_quotes"] = Builtins.fix_smart_quotes
+  ["mixed_line_ending"] = Builtins.mixed_line_ending
+  ["newlines"] = Builtins.newlines
+  ["pkl"] = Builtins.pkl
+  ["pkl_format"] = Builtins.pkl_format
+  ["python_check_ast"] = Builtins.python_check_ast
+  ["python_debug_statements"] = Builtins.python_debug_statements
+  ["ruff"] = Builtins.ruff
+  ["ruff_format"] = Builtins.ruff_format
+  ["rumdl"] = Builtins.rumdl
+  ["toml"] = Builtins.tombi
+  ["toml_format"] = Builtins.tombi_format
+  ["trailing_whitespace"] = Builtins.trailing_whitespace
+  ["ty"] = Builtins.ty
+  ["typos"] = Builtins.typos
+  ["yaml"] = Builtins.ryl
+}
+
+local commit_message_check = new Mapping<String, Step> {
+  ["check_conventional_commit"] = Builtins.check_conventional_commit
+  ["typos"] {
+    check = "typos {% raw %}{{commit_msg_file}}{% endraw %}"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps = linters
+  }
+  ["commit-msg"] {
+    steps = commit_message_check
+  }
+  ["fix"] {
+    fix = true
+    steps = linters
+  }
+  ["check"] {
+    steps = linters
+  }
+}

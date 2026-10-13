@@ -1,0 +1,31 @@
+# {{ project_name }}
+
+{{ (project_description ~ ".") | wordwrap(80, break_long_words=False, break_on_hyphens=False) }}
+
+## Usage
+
+```python
+from {{ package_name }} import greet
+
+greet("World")
+```
+
+## Development
+
+Tools come from [mise](https://mise.jdx.dev) and Python dependencies from
+[uv](https://docs.astral.sh/uv/).
+
+```sh
+mise run setup        # install the tools and git hooks
+mise run test         # run the tests
+mise run fix-all      # apply linter and formatter fixes
+mise run check-all    # run all linters, formatters and type checks
+```
+
+[hk](https://hk.jdx.dev) runs the checks as a pre-commit hook and checks that
+commit messages follow
+[conventional commits](https://www.conventionalcommits.org).
+
+This project was created from
+[python-template](https://github.com/CallumKerson/python-template). Pull in
+template changes with `mise run update-template`.

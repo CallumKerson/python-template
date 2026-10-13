@@ -1,0 +1,63 @@
+[project]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ project_description }}"
+readme = "README.md"
+requires-python = ">={{ python_version }}"
+authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest",
+]
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[tool.pytest]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+lint.ignore = [
+  "COM812",  # Conflicts with the formatter
+  "D203",  # Conflicts with D211
+  "D212",  # Conflicts with D213
+  "EXE003",  # Allows uv in shebangs
+  "ISC001",  # Conflicts with the formatter
+  "CPY001",  # No copyright headers
+]
+lint.select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+".mise/tasks/**" = [
+  "INP001",  # Tasks are scripts, not packages
+  "S603",  # Commands are built from fixed arguments
+  "S607",  # Tools are found on PATH through mise
+  "T201",  # Tasks report what they did
+]
+"tests/**" = [
+  "D100",  # Tests are self-documenting
+  "D103",  # Tests are self-documenting
+  "INP001",  # Tests are not a package
+  "PLR0913",  # Fixtures and mocks need many arguments
+  "PLR2004",  # Magic numbers in asserts
+  "PT011",  # Broad pytest.raises
+  "S101",  # Asserts are required in tests
+  "S105",  # Dummy passwords
+  "S106",  # Dummy passwords
+  "FBT001",  # Boolean parameters from parametrize
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.pylint]
+max-args = 7
+max-branches = 15

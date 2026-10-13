@@ -1,0 +1,65 @@
+[deps.uv]
+auto = true
+
+[settings]
+experimental = true
+lockfile = true
+
+[tasks.build]
+description = "Build the sdist and wheel into dist/"
+run = ["rm -rf dist", "uv build"]
+
+[tasks.check]
+description = "Run all linter and formatter checks with hk against changed files"
+run = "hk check --no-fail-fast"
+
+[tasks.check-all]
+description = "Run all linter and formatter checks with hk against all files"
+run = "hk check --all --no-fail-fast"
+
+[tasks.fix]
+description = "Fix all linter and formatter issues with hk against changed files"
+run = "hk fix --no-fail-fast"
+
+[tasks.fix-all]
+description = "Fix all linter and formatter issues with hk against all files"
+run = "hk fix --all --no-fail-fast"
+
+[tasks.setup]
+description = "Pin versions and install the git hooks in a new project"
+run = ["git rev-parse --git-dir >/dev/null 2>&1 || git init --quiet", "mise run pin", "hk install"]
+
+[tasks.test]
+description = "Run tests with pytest"
+run = "uv run pytest"
+
+[tasks.update-template]
+description = "Pull in changes from the python-template copier template"
+run = ["uvx copier update --skip-answered --answers-file .copier-answers.yaml", "mise run pin"]
+
+[tools."aqua:owenlamont/ryl"]
+version = "latest"
+
+[tools.hk]
+version = "latest"
+
+[tools.pkl]
+version = "latest"
+
+[tools.ruff]
+version = "latest"
+
+[tools.rumdl]
+version = "latest"
+
+[tools.tombi]
+version = "latest"
+
+[tools.ty]
+version = "latest"
+
+[tools.typos]
+version = "latest"
+
+[tools.uv]
+version = "latest"

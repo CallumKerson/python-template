@@ -1,0 +1,45 @@
+project_name:
+  type: str
+  help: What is your project name?
+  default: "{{ _copier_conf.dst_path | basename | lower | replace(' ', '-') }}"
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z][a-z0-9\\-]+$')) %}
+    project_name must start with a letter, followed one or more letters, digits or dashes all lowercase.
+    {% endif %}
+
+project_description:
+  type: str
+  help: What is your project for?
+  default: A cool new Python project
+
+package_name:
+  type: str
+  default: "{{ project_name | replace('-', '_') }}"
+  when: false
+
+author_name:
+  type: str
+  help: Who is the author?
+  default: Callum Kerson
+
+author_email:
+  type: str
+  help: What is the author's email?
+  default: 12272439+CallumKerson@users.noreply.github.com
+
+python_version:
+  type: str
+  help: What is the minimum Python version?
+  default: "3.14"
+
+_subdirectory: template
+_answers_file: .copier-answers.yaml
+
+# Example code is the project's once it exists, on copy and update
+_skip_if_exists:
+  - "src/{{ package_name }}/*.py"
+  - "tests/test_{{ package_name }}.py"
+
+# No _tasks: copier would need --trust, which Renovate can't pass
+_message_after_copy: |
+  Run `mise run setup` in {{ _copier_conf.dst_path }} to pin versions and install the git hooks.

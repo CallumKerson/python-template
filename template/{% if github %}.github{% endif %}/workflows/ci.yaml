@@ -11,6 +11,8 @@ permissions:
 
 env:
   UV_CACHE_DIR: /tmp/.uv-cache
+  # uv installs Python outside its cache, so put it somewhere cacheable too
+  UV_PYTHON_INSTALL_DIR: /tmp/.uv-python
   MISE_TASK_OUTPUT: keep-order
 
 jobs:
@@ -37,11 +39,13 @@ jobs:
 
       - uses: actions/cache@v6
         with:
-          path: /tmp/.uv-cache
-          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          path: |
+            /tmp/.uv-cache
+            /tmp/.uv-python
+          key: uv-python-${{ runner.os }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
-            uv-${{ runner.os }}
+            uv-python-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+            uv-python-${{ runner.os }}
 
       - run: mise run ci
         env:

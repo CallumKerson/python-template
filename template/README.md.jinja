@@ -30,6 +30,16 @@ mise run check-all    # run all linters, formatters and type checks
 [hk](https://hk.jdx.dev) runs the checks as a pre-commit hook and checks that
 commit messages follow
 [conventional commits](https://www.conventionalcommits.org).
+{%- if github %}
+
+## Releases
+
+[release-please](https://github.com/googleapis/release-please) opens a release
+pull request from conventional commits on `main`. It uses a GitHub App's token,
+so release pull requests run CI. The repository needs the App's client ID in
+the `RELEASE_APP_CLIENT_ID` variable and its private key in the
+`RELEASE_APP_PRIVATE_KEY` secret.
+{%- endif %}
 
 This project was created from
 [python-template](https://github.com/CallumKerson/python-template). Pull in

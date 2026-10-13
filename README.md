@@ -60,6 +60,9 @@ The project's `mise run pin` task (`template/.mise/tasks/pin.py`) pins only
 those placeholders to the current versions and locks them with `mise lock`
 and `uv sync`; `mise run setup` and `mise run update-template` run it.
 Versions the project has already pinned are left alone.
+It looks versions up through GitHub's API, which allows 60 requests an hour
+without a token, so it uses `GITHUB_TOKEN`, or the GitHub CLI's token when
+you're logged in to `gh`.
 
 The template has no copier tasks, so neither copier nor Renovate's copier
 manager needs `--trust`. The catch is that `copier update` merges against

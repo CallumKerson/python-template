@@ -6,10 +6,17 @@ Pin the unversioned placeholders python-template writes to concrete versions.
 Only placeholders are touched: tools set to "latest" in mise.toml, the LATEST
 sentinel in hk.pkl, a bare uv_build, Python dependencies without a version and
 the unversioned Renovate preset. Versions already pinned are left alone.
+
+Looking up versions calls GitHub's API, which allows only 60 requests an hour
+without a token. Set GITHUB_TOKEN, or log in to the GitHub CLI and its token is
+used instead.
 """
 
+import os
 import re
+import shutil
 import subprocess
+import sys
 import tomllib
 from pathlib import Path
 
@@ -23,8 +30,22 @@ RENOVATE_PRESET = "CallumKerson/renovate-config"
 
 
 def run(*args: str) -> str:
-    """Run a command, returning its output."""
-    return subprocess.run(args, check=True, capture_output=True, text=True).stdout.strip()
+    """Run a command, returning its output, or print its output and exit if it fails."""
+    result = subprocess.run(args, check=False, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"{' '.join(args)} failed:\n{result.stdout}{result.stderr}", file=sys.stderr)
+        sys.exit(result.returncode)
+    return result.stdout.strip()
+
+
+def use_gh_token() -> None:
+    """Give the commands this runs the GitHub CLI's token, unless GITHUB_TOKEN is set."""
+    if os.environ.get("GITHUB_TOKEN") or not shutil.which("gh"):
+        return
+    # Fails when gh isn't logged in, which leaves the lookups unauthenticated
+    token = subprocess.run(("gh", "auth", "token"), check=False, capture_output=True, text=True).stdout.strip()
+    if token:
+        os.environ["GITHUB_TOKEN"] = token
 
 
 def tool_version(value: object) -> object:
@@ -109,6 +130,7 @@ def pin_renovate_preset() -> None:
 
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
+    use_gh_token()
     pin_mise_tools()
     run("mise", "install", "--quiet")
     pin_hk_pkl()

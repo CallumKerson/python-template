@@ -102,7 +102,7 @@ def main() -> None:
     pin_python_dependencies()
     if WORKFLOWS.is_dir():
         # Pins actions given by tag, e.g. actions/checkout@v6, to their commit
-        run("mise", "exec", "--", "pinact", "run")
+        run("mise", "exec", "pinact@latest", "--", "pinact", "run")
     run("mise", "lock")
 
 

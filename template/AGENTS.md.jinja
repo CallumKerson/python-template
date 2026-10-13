@@ -42,6 +42,8 @@ The `{{ project_name }}` CLI is built with
 - GitHub Actions runs `mise run ci` on pull requests and `main`. Renovate
   updates dependencies, and release-please makes releases from conventional
   commits.
+- zizmor rejects actions not pinned to a commit. Pin new ones with
+  `mise exec pinact@latest -- pinact run`.
 {%- else %}
 - There is no CI; hk hooks are the only gate.
 {%- endif %}

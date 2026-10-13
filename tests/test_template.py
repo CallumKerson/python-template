@@ -88,7 +88,8 @@ def test_copy(template: Path, tmp_path: Path) -> None:
     assert (project / "mise.lock").is_file()
     assert (project / ANSWERS_FILE).is_file()
 
-    # The generated project passes its own checks and tests
+    # The generated project passes its own checks and tests, even from a fresh clone
+    shutil.rmtree(project / ".venv")
     run(project, "mise", "run", "check-all")
     run(project, "mise", "run", "test")
 
@@ -104,6 +105,7 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     mise_toml.write_text(mise_toml.read_text().replace(ruff.format(pinned_ruff), ruff.format("0.15.0")))
     pyproject = project / "pyproject.toml"
     pyproject.write_text(pyproject.read_text().replace("dev = [\n", 'dev = [\n  "pytest-cov>=7.0.0",\n'))
+    run(project, "mise", "exec", "--", "uv", "lock")
     init = project / "src/demo_app/__init__.py"
     init.write_text('"""Code the project wrote."""\n')
     commit_all(project, "build: pin ruff and add pytest-cov")

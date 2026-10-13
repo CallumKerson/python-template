@@ -18,8 +18,7 @@ mise run setup    # pin versions and install the git hooks
 It asks for:
 
 - the project's name, description and author;
-- the minimum Python version;
-- whether mise should run `uv sync` automatically.
+- the minimum Python version.
 
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.

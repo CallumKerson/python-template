@@ -32,11 +32,6 @@ python_version:
   help: What is the minimum Python version?
   default: "3.14"
 
-uv_auto_sync:
-  type: bool
-  help: Have mise run uv sync automatically?
-  default: false
-
 _subdirectory: template
 _answers_file: .copier-answers.yaml
 

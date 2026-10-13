@@ -17,7 +17,8 @@
 
 ## Tooling
 
-- mise manages tools; uv manages Python and dependencies.
+- mise manages tools; uv manages Python and dependencies, and mise runs
+  `uv sync` before tasks when they're out of date.
 - hk (`hk.pkl`) runs ruff, ty, rumdl (Markdown), ryl (YAML), tombi (TOML),
   typos and file hygiene checks as a pre-commit hook, and checks commit
   messages follow conventional commits.

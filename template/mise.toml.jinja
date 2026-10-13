@@ -1,13 +1,9 @@
-{% if uv_auto_sync -%}
 [deps.uv]
 auto = true
 
-{% endif -%}
 [settings]
-lockfile = true
-{%- if uv_auto_sync %}
 experimental = true
-{%- endif %}
+lockfile = true
 
 [tasks.build]
 description = "Build the sdist and wheel into dist/"

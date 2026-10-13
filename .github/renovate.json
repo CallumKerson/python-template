@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>CallumKerson/renovate-config#v1.1.0"],
+  "extends": ["github>CallumKerson/renovate-config#v1.2.0"],
   "description": "The template's tools and dependencies are deliberately unversioned; generated projects pin them",
   "ignorePaths": ["template/**"]
 }

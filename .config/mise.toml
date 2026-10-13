@@ -35,18 +35,45 @@ run = "hk fix --no-fail-fast"
 description = "Fix all linter and formatter issues with hk against all files"
 run = "hk fix --all --no-fail-fast"
 
-[tools]
-actionlint = "1.7.12"
-"aqua:owenlamont/ryl" = "0.24.0"
-aube = "2.7.0"
-hk = "2.5.0"
-oxfmt = { version = "0.72.0", depends = ["aube"] }
-pkl = "0.32.1"
-ruff = "0.17.0"
-rumdl = "0.2.79"
-shellcheck = "0.11.0"
-tombi = "1.8.1"
-ty = "0.0.86"
-typos = "1.51.1"
-uv = "0.13.0"
-zizmor = "1.30.1"
+[tools.actionlint]
+version = "1.7.12"
+
+[tools."aqua:owenlamont/ryl"]
+version = "0.24.0"
+
+[tools.aube]
+version = "2.7.0"
+
+[tools.hk]
+version = "2.5.0"
+
+[tools.oxfmt]
+version = "0.72.0"
+depends = ["aube"]
+
+[tools.pkl]
+version = "0.32.1"
+
+[tools.ruff]
+version = "0.17.0"
+
+[tools.rumdl]
+version = "0.2.79"
+
+[tools.shellcheck]
+version = "0.11.0"
+
+[tools.tombi]
+version = "1.8.1"
+
+[tools.ty]
+version = "0.0.86"
+
+[tools.typos]
+version = "1.51.1"
+
+[tools.uv]
+version = "0.13.0"
+
+[tools.zizmor]
+version = "1.30.1"

@@ -92,7 +92,8 @@ def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool
     assert (project / ANSWERS_FILE).is_file()
     assert (project / ".github").is_dir() == github
     if github:
-        assert "@v" not in (project / ".github/workflows/ci.yaml").read_text().replace("# v", "")
+        for workflow in (project / ".github/workflows").iterdir():
+            assert "@v" not in workflow.read_text().replace("# v", ""), workflow.name
         renovate = json.loads((project / ".github/renovate.json").read_text())
         assert re.fullmatch(r"github>CallumKerson/renovate-config#v\d+\.\d+\.\d+", renovate["extends"][0])
 

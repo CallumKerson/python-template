@@ -16,12 +16,15 @@ tasks, and `template/` is what gets copied.
 ## Rules
 
 - Never put a version in `template/`. Tools are `"latest"` in
-  `template/mise.toml.jinja`, hk's package version is `LATEST` in
-  `template/hk.pkl.jinja`, Python dependencies are bare names, GitHub Actions
-  use major tags (`@v6`), and the Renovate preset has no tag. The generated
-  project's `mise run pin` (`template/.mise/tasks/pin.py`) pins them, using
-  pinact for actions and the latest release tag for the preset. Changing those
-  lines later would conflict with versions projects have since pinned.
+  `template/.config/mise.toml.jinja`, hk's package version is `LATEST` in
+  `template/.config/hk.pkl.jinja`, Python dependencies are bare names, GitHub
+  Actions use major tags (`@v6`), and the Renovate preset has no tag. The
+  generated project's `mise run pin` (`template/.config/mise/tasks/pin.py`)
+  pins them, using pinact for actions and the latest release tag for the
+  preset. Changing those lines later would conflict with versions projects
+  have since pinned.
+- Tool config goes in `.config/`, in the template as in this repo, except
+  `.typos.toml`: typos only reads config from the root.
 - Don't add copier `_tasks`: they make copier and Renovate need `--trust`.
 - Write each mise tool as its own `[tools.<name>]` table, so `copier update`
   can add or remove one without conflicting with neighbouring pins.

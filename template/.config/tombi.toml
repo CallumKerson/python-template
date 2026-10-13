@@ -2,7 +2,7 @@
 # [tools] table last.
 [[schemas]]
 path = "https://mise.jdx.dev/schema/mise.json"
-include = ["mise.toml"]
+include = [".config/mise.toml"]
 
 [[schemas.overrides]]
 targets = ["", "tasks", "tools"]

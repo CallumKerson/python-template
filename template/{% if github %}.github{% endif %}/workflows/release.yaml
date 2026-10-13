@@ -62,3 +62,5 @@ jobs:
       - uses: googleapis/release-please-action@v5
         with:
           token: ${{ steps.app-token.outputs.token }}
+          config-file: .config/release-please-config.json
+          manifest-file: .config/release-please-manifest.json

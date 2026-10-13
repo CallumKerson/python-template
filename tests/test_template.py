@@ -65,8 +65,8 @@ def generate(template: Path, project: Path, **data: object) -> None:
 
 
 def mise_tools(project: Path) -> dict:
-    """Return the [tools] table of the project's mise.toml."""
-    return tomllib.loads((project / "mise.toml").read_text())["tools"]
+    """Return the [tools] table of the project's .config/mise.toml."""
+    return tomllib.loads((project / ".config/mise.toml").read_text())["tools"]
 
 
 def tool_version(value: str | dict) -> str:
@@ -83,12 +83,12 @@ def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool
     # Every placeholder is pinned
     versions = [tool_version(v) for v in mise_tools(project).values()]
     assert all(re.fullmatch(r"\d+(\.\d+)+", v) for v in versions), versions
-    assert "LATEST" not in (project / "hk.pkl").read_text()
+    assert "LATEST" not in (project / ".config/hk.pkl").read_text()
     pyproject = tomllib.loads((project / "pyproject.toml").read_text())
     assert re.fullmatch(r"uv_build>=\d+\.\d+\.0,<\d+\.\d+\.0", pyproject["build-system"]["requires"][0])
     requirements = pyproject["project"]["dependencies"] + pyproject["dependency-groups"]["dev"]
     assert all(">=" in r for r in requirements), requirements
-    assert (project / "mise.lock").is_file()
+    assert (project / ".config/mise.lock").is_file()
     assert (project / ANSWERS_FILE).is_file()
     assert (project / ".github").is_dir() == github
     if github:
@@ -110,7 +110,7 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     generate(template, project)
 
     # The project manages its own versions
-    mise_toml = project / "mise.toml"
+    mise_toml = project / ".config/mise.toml"
     pinned_ruff = tool_version(mise_tools(project)["ruff"])
     ruff = '[tools.ruff]\nversion = "{}"'
     mise_toml.write_text(mise_toml.read_text().replace(ruff.format(pinned_ruff), ruff.format("0.15.0")))
@@ -122,7 +122,7 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     commit_all(project, "build: pin ruff and add pytest-cov")
 
     # The template adds a tool and changes another file
-    tools = template / "template/mise.toml.jinja"
+    tools = template / "template/.config/mise.toml.jinja"
     tools.write_text(
         tools.read_text().replace("[tools.rumdl]", '[tools.shellcheck]\nversion = "latest"\n\n[tools.rumdl]')
     )

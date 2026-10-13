@@ -53,12 +53,12 @@ add them back on update. Then run `mise run setup`, `mise run check-all` and
 ## Versions belong to the project
 
 The template never sets tool or dependency versions. It writes them
-unversioned: `"latest"` in `mise.toml`, `LATEST` in `hk.pkl`, and bare
-`uv_build`, `pytest` and `cyclopts` in `pyproject.toml`.
+unversioned: `"latest"` in `.config/mise.toml`, `LATEST` in `.config/hk.pkl`,
+and bare `uv_build`, `pytest` and `cyclopts` in `pyproject.toml`.
 
-The project's `mise run pin` task (`template/.mise/tasks/pin.py`) pins only
-those placeholders to the current versions and locks them with `mise lock`
-and `uv sync`; `mise run setup` and `mise run update-template` run it.
+The project's `mise run pin` task (`template/.config/mise/tasks/pin.py`)
+pins only those placeholders to the current versions and locks them with
+`mise lock` and `uv sync`; `mise run setup` and `mise run update-template` run it.
 Versions the project has already pinned are left alone.
 It looks versions up through GitHub's API, which allows 60 requests an hour
 without a token, so it uses `GITHUB_TOKEN`, or the GitHub CLI's token when
@@ -69,7 +69,7 @@ manager needs `--trust`. The catch is that `copier update` merges against
 the unpinned template, so it sees every pinned line as the project's own
 change, and a template change next to one conflicts. Each mise tool is its
 own `[tools.<name>]` table so that adding or removing a tool merges cleanly.
-Changes beside the versions in `hk.pkl` or `pyproject.toml` can still
+Changes beside the versions in `.config/hk.pkl` or `pyproject.toml` can still
 conflict.
 
 When adding a tool or dependency to the template, add it unversioned.

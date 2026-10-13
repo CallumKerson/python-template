@@ -5,8 +5,8 @@ import "package://github.com/jdx/hk/releases/download/vLATEST/hk@LATEST#/Builtin
 min_hk_version = "LATEST"
 {%- if github %}
 
-// mise lock writes .mise/locks
-exclude = List(".mise/locks/**", "CHANGELOG.md", "LICENSE")
+// mise lock writes .config/mise/locks
+exclude = List(".config/mise/locks/**", "CHANGELOG.md", "LICENSE")
 {%- endif %}
 
 local linters = new Mapping<String, Step> {

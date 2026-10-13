@@ -3,9 +3,10 @@
 """
 Pin the unversioned placeholders python-template writes to concrete versions.
 
-Only placeholders are touched: tools set to "latest" in mise.toml, the LATEST
-sentinel in hk.pkl, a bare uv_build, Python dependencies without a version and
-the unversioned Renovate preset. Versions already pinned are left alone.
+Only placeholders are touched: tools set to "latest" in .config/mise.toml, the
+LATEST sentinel in .config/hk.pkl, a bare uv_build, Python dependencies without
+a version and the unversioned Renovate preset. Versions already pinned are left
+alone.
 
 Looking up versions calls GitHub's API, which allows only 60 requests an hour
 without a token. Set GITHUB_TOKEN, or log in to the GitHub CLI and its token is
@@ -20,8 +21,8 @@ import sys
 import tomllib
 from pathlib import Path
 
-MISE_TOML = Path("mise.toml")
-HK_PKL = Path("hk.pkl")
+MISE_TOML = Path(".config/mise.toml")
+HK_PKL = Path(".config/hk.pkl")
 PYPROJECT = Path("pyproject.toml")
 UV_LOCK = Path("uv.lock")
 WORKFLOWS = Path(".github/workflows")

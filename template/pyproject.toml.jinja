@@ -32,6 +32,12 @@ lint.ignore = [
 lint.select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+".mise/tasks/**" = [
+  "INP001",  # Tasks are scripts, not packages
+  "S603",  # Commands are built from fixed arguments
+  "S607",  # Tools are found on PATH through mise
+  "T201",  # Tasks report what they did
+]
 "tests/**" = [
   "D100",  # Tests are self-documenting
   "D103",  # Tests are self-documenting

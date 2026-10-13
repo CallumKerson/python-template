@@ -18,8 +18,12 @@ tasks, and `template/` is what gets copied.
 - Never put a version in `template/`. Tools are `"latest"` in
   `template/mise.toml.jinja`, hk's package version is `LATEST` in
   `template/hk.pkl.jinja`, and Python dependencies are bare names.
-  `tasks/pin_placeholders.py` pins them in the generated project. Changing
-  those lines later would conflict with versions projects have since pinned.
+  The generated project's `mise run pin` (`template/.mise/tasks/pin.py`) pins
+  them. Changing those lines later would conflict with versions projects have
+  since pinned.
+- Don't add copier `_tasks`: they make copier and Renovate need `--trust`.
+- Write each mise tool as its own `[tools.<name>]` table, so `copier update`
+  can add or remove one without conflicting with neighbouring pins.
 - Renovate ignores `template/`; this repo's own tools in the root `mise.toml`
   are pinned and updated by Renovate.
 - Files ending `.jinja` are rendered; others are copied as they are.

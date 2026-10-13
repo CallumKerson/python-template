@@ -26,10 +26,9 @@ lint.ignore = [
   "EXE003",  # Can use uv as the shebang
   "ISC001",  # Interferes with formatter
   "CPY001",  # No copyright notice in source files
-  "INP001",  # Tasks and tests are scripts, not packages
+  "INP001",  # Tests are scripts, not packages
   "S603",  # Commands are built from fixed arguments
   "S607",  # Tools are found on PATH through mise
-  "T201",  # Tasks report what they pinned with print
 ]
 lint.select = ["ALL"]
 

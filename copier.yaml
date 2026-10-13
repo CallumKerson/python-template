@@ -40,12 +40,6 @@ uv_auto_sync:
 _subdirectory: template
 _answers_file: .config/copier-answers.yaml
 
-# Tools and dependencies are written unversioned (e.g. "latest"). The pin task
-# fixes only those placeholders to concrete versions, so `copier update` never
-# changes versions a project has already pinned.
-_tasks:
-  - command: git rev-parse --git-dir >/dev/null 2>&1 || git init --quiet
-    when: "{{ _copier_operation == 'copy' }}"
-  - ["{{ _copier_python }}", "{{ _copier_conf.src_path }}/tasks/pin_placeholders.py"]
-  - command: mise exec -- hk install
-    when: "{{ _copier_operation == 'copy' }}"
+# No _tasks: copier would need --trust, which Renovate can't pass
+_message_after_copy: |
+  Run `mise run setup` in {{ _copier_conf.dst_path }} to pin versions and install the git hooks.

@@ -11,7 +11,7 @@ import tomllib
 from pathlib import Path
 
 import pytest
-from copier import run_copy, run_update
+from copier import run_copy
 
 TEMPLATE = Path(__file__).parent.parent
 ANSWERS_FILE = ".config/copier-answers.yaml"
@@ -49,8 +49,11 @@ def template(tmp_path: Path) -> Path:
 
 
 def generate(template: Path, project: Path, **data: object) -> None:
-    """Generate a project from the template with default answers."""
-    run_copy(str(template), project, data={"project_name": "demo-app", **data}, defaults=True, unsafe=True)
+    """Generate a project from the template with default answers, then set it up."""
+    # Without unsafe=True, copier refuses templates with tasks, as it would for Renovate
+    run_copy(str(template), project, data={"project_name": "demo-app", **data}, defaults=True)
+    run(project, "mise", "trust", "--quiet")
+    run(project, "mise", "run", "setup")
     commit_all(project, "feat: initial commit")
 
 
@@ -90,25 +93,28 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
 
     # The project manages its own versions
     mise_toml = project / "mise.toml"
-    pinned_ruff = mise_tools(project)["ruff"]
-    mise_toml.write_text(mise_toml.read_text().replace(f'ruff = "{pinned_ruff}"', 'ruff = "0.15.0"'))
+    pinned_ruff = tool_version(mise_tools(project)["ruff"])
+    ruff = '[tools.ruff]\nversion = "{}"'
+    mise_toml.write_text(mise_toml.read_text().replace(ruff.format(pinned_ruff), ruff.format("0.15.0")))
     pyproject = project / "pyproject.toml"
     pyproject.write_text(pyproject.read_text().replace("dev = [\n", 'dev = [\n  "pytest-cov>=7.0.0",\n'))
     commit_all(project, "build: pin ruff and add pytest-cov")
 
     # The template adds a tool and changes another file
     tools = template / "template/mise.toml.jinja"
-    tools.write_text(tools.read_text().replace('ruff = "latest"\n', 'ruff = "latest"\nshellcheck = "latest"\n'))
+    tools.write_text(
+        tools.read_text().replace("[tools.rumdl]", '[tools.shellcheck]\nversion = "latest"\n\n[tools.rumdl]')
+    )
     readme = template / "template/README.md.jinja"
     readme.write_text(readme.read_text() + "\nA new paragraph from the template.\n")
     commit_all(template, "feat: add shellcheck")
     run(template, "git", "tag", "v2.0.0")
 
-    run_update(project, answers_file=ANSWERS_FILE, defaults=True, overwrite=True, unsafe=True)
+    run(project, "mise", "run", "update-template")
 
     tools = mise_tools(project)
-    assert tools["ruff"] == "0.15.0"
-    assert re.fullmatch(r"\d+(\.\d+)+", tools["shellcheck"])
+    assert tool_version(tools["ruff"]) == "0.15.0"
+    assert re.fullmatch(r"\d+(\.\d+)+", tool_version(tools["shellcheck"]))
     assert '"pytest-cov>=7.0.0"' in pyproject.read_text()
     assert "A new paragraph from the template." in (project / "README.md").read_text()
     assert not list(project.rglob("*.rej"))

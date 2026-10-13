@@ -1,11 +1,11 @@
+#!/usr/bin/env -S uv run --script
+# [MISE] description="Pin tools and dependencies the template left unversioned"
 """
-Pin the unversioned placeholders the template writes to concrete versions.
+Pin the unversioned placeholders python-template writes to concrete versions.
 
-Copier runs this in the generated project after every copy and update. Only
-placeholders are touched: tools set to "latest" in mise.toml, the LATEST
+Only placeholders are touched: tools set to "latest" in mise.toml, the LATEST
 sentinel in hk.pkl, a bare uv_build and Python dependencies without a version.
-Versions the project has already pinned are its own and are left alone, so
-the template never fights a project's dependency updates.
+Versions already pinned are left alone.
 """
 
 import re
@@ -36,9 +36,10 @@ def pin_mise_tools() -> None:
         if tool_version(value) != "latest":
             continue
         version = run("mise", "latest", name)
-        # The key may be bare or quoted, and the version inline or in a table
-        line = re.compile(rf'^(\s*"?{re.escape(name)}"?\s*=.*?)"latest"', re.MULTILINE)
-        text = line.sub(rf'\g<1>"{version}"', text, count=1)
+        # Either version = "latest" in a [tools.<name>] table, or <name> = "latest"
+        key = rf'"?{re.escape(name)}"?'
+        placeholder = re.compile(rf'^((?:\[tools\.{key}\][^\[]*?version|{key})\s*=.*?)"latest"', re.MULTILINE)
+        text = placeholder.sub(rf'\g<1>"{version}"', text, count=1)
         print(f"Pinned {name} to {version} in {MISE_TOML}")
     MISE_TOML.write_text(text)
 
@@ -93,7 +94,6 @@ def pin_python_dependencies() -> None:
 
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
-    run("mise", "trust", "--quiet")
     pin_mise_tools()
     run("mise", "install", "--quiet")
     pin_hk_pkl()

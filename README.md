@@ -7,11 +7,12 @@ running ruff, ty, rumdl, ryl, tombi and typos as git hooks.
 
 ## Usage
 
-Projects need [mise](https://mise.jdx.dev/getting-started.html). The template
-runs tasks after copying, so it has to be trusted:
+Projects need [mise](https://mise.jdx.dev/getting-started.html):
 
 ```sh
-uvx copier copy --trust gh:CallumKerson/python-template my-project
+uvx copier copy gh:CallumKerson/python-template my-project
+cd my-project
+mise run setup    # pin versions and install the git hooks
 ```
 
 It asks for:
@@ -29,11 +30,18 @@ The template never sets tool or dependency versions. It writes them
 unversioned: `"latest"` in `mise.toml`, `LATEST` in `hk.pkl`, and bare
 `uv_build` and `pytest` in `pyproject.toml`.
 
-After every copy and update, `tasks/pin_placeholders.py` pins only those
-placeholders to the current versions and locks them with `mise lock` and
-`uv sync`. Versions the project has already pinned are left alone. Since the
-template's lines don't change between releases, `copier update` never touches
-a project's versions; keeping them up to date is the project's job.
+The project's `mise run pin` task (`template/.mise/tasks/pin.py`) pins only
+those placeholders to the current versions and locks them with `mise lock`
+and `uv sync`; `mise run setup` and `mise run update-template` run it.
+Versions the project has already pinned are left alone.
+
+The template has no copier tasks, so neither copier nor Renovate's copier
+manager needs `--trust`. The catch is that `copier update` merges against
+the unpinned template, so it sees every pinned line as the project's own
+change, and a template change next to one conflicts. Each mise tool is its
+own `[tools.<name>]` table so that adding or removing a tool merges cleanly.
+Changes beside the versions in `hk.pkl` or `pyproject.toml` can still
+conflict.
 
 When adding a tool or dependency to the template, add it unversioned.
 

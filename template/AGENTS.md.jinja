@@ -39,9 +39,12 @@ The `{{ project_name }}` CLI is built with
   typos and file hygiene checks as a pre-commit hook, and checks commit
   messages follow conventional commits.
 {%- if github %}
-- GitHub Actions runs `mise run ci` on pull requests and `main`. Renovate
-  updates dependencies, and release-please makes releases from conventional
-  commits.
+- GitHub Actions runs `mise run ci` on pull requests and `main`, and
+  release-please makes releases from conventional commits.
+- Renovate updates dependencies using the shared
+  [CallumKerson/renovate-config](https://github.com/CallumKerson/renovate-config)
+  preset, pinned to a release in `.github/renovate.json`. Put rules only this
+  repo needs there too.
 - zizmor rejects actions not pinned to a commit. Pin new ones with
   `mise exec pinact@latest -- pinact run`.
 {%- else %}

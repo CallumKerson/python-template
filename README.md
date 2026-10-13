@@ -73,9 +73,16 @@ When adding a tool or dependency to the template, add it unversioned.
 
 ## Renovate
 
-Generated projects with GitHub on use Renovate's copier manager to open a pull
-request for each new template release. Renovate has no mise, so anything new
-from the template stays unpinned until `mise run pin` runs locally.
+Generated projects with GitHub on extend my shared
+[renovate-config](https://github.com/CallumKerson/renovate-config) preset,
+which holds the rules for mise, hk, uv and GitHub Actions. The template writes
+it unversioned, and `mise run pin` pins it to the latest release tag; after
+that Renovate bumps the tag like any other dependency. Put rules that belong to
+every project in the preset, not the template.
+
+Renovate's copier manager opens a pull request for each new template release.
+Renovate has no mise, so anything new from the template stays unpinned until
+`mise run pin` runs locally.
 
 ## Development
 

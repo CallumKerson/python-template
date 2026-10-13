@@ -4,6 +4,7 @@ Generate projects from the template and check they work.
 These run the template's tasks for real, so they need mise and network access.
 """
 
+import json
 import re
 import shutil
 import subprocess
@@ -92,6 +93,8 @@ def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool
     assert (project / ".github").is_dir() == github
     if github:
         assert "@v" not in (project / ".github/workflows/ci.yaml").read_text().replace("# v", "")
+        renovate = json.loads((project / ".github/renovate.json").read_text())
+        assert re.fullmatch(r"github>CallumKerson/renovate-config#v\d+\.\d+\.\d+", renovate["extends"][0])
 
     # The generated project passes its own checks and tests, even from a fresh clone
     shutil.rmtree(project / ".venv")

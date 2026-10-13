@@ -1,5 +1,5 @@
 # yamllint's default rules, without the document start marker that copier's
-# answers file doesn't write, with room for pinact's pinned actions
+# answers file doesn't write, with room for pinned actions
 [files]
 yaml = ["*.yaml", "*.yml"]
 
@@ -26,7 +26,7 @@ trailing-spaces = "enable"
 
 [rules.comments]
 level = "warning"
-# pinact writes a single space before the version comment
+# Pinned actions have a single space before the version comment
 min-spaces-from-content = 1
 
 [rules.comments-indentation]

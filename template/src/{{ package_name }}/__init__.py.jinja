@@ -1,6 +1,8 @@
 """The {{ project_name }} package."""
+{%- if project_type == 'library' %}
 
 
 def greet(name: str) -> str:
     """Return a greeting for name."""
     return f"Hello, {name}!"
+{%- endif %}

@@ -18,7 +18,8 @@ mise run setup    # pin versions and install the git hooks
 It asks for:
 
 - the project's name, description and author;
-- the minimum Python version.
+- the minimum Python version;
+- whether it's a library or a [cyclopts](https://cyclopts.readthedocs.io) CLI.
 
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.
@@ -50,7 +51,7 @@ add them back on update. Then run `mise run setup`, `mise run check-all` and
 
 The template never sets tool or dependency versions. It writes them
 unversioned: `"latest"` in `mise.toml`, `LATEST` in `hk.pkl`, and bare
-`uv_build` and `pytest` in `pyproject.toml`.
+`uv_build`, `pytest` and `cyclopts` in `pyproject.toml`.
 
 The project's `mise run pin` task (`template/.mise/tasks/pin.py`) pins only
 those placeholders to the current versions and locks them with `mise lock`

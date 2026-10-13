@@ -5,7 +5,18 @@ description = "{{ project_description }}"
 readme = "README.md"
 requires-python = ">={{ python_version }}"
 authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
+{%- if project_type == 'cli' %}
+dependencies = [
+  "cyclopts",
+]
+{%- else %}
 dependencies = []
+{%- endif %}
+{%- if project_type == 'cli' %}
+
+[project.scripts]
+{{ project_name }} = "{{ package_name }}.cli:app"
+{%- endif %}
 
 [dependency-groups]
 dev = [
@@ -28,6 +39,9 @@ lint.ignore = [
   "EXE003",  # Allows uv in shebangs
   "ISC001",  # Conflicts with the formatter
   "CPY001",  # No copyright headers
+{%- if project_type == 'cli' %}
+  "T201",  # CLI output uses print
+{%- endif %}
 ]
 lint.select = ["ALL"]
 

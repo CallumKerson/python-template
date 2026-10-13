@@ -1,0 +1,22 @@
+"""Command line interface for {{ project_name }}."""
+
+from cyclopts import App
+
+app = App(
+    name="{{ project_name }}",
+    help="{{ (project_description ~ ".") | wordwrap(100, break_long_words=False, break_on_hyphens=False, wrapstring=' "\n    "') }}",
+)
+
+
+@app.command
+def hello(name: str = "World") -> None:
+    """
+    Say hello.
+
+    Parameters
+    ----------
+    name
+        Who to greet.
+
+    """
+    print(f"Hello, {name}!")

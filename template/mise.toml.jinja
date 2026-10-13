@@ -4,10 +4,12 @@ auto = true
 [settings]
 experimental = true
 lockfile = true
+{%- if project_type == 'library' %}
 
 [tasks.build]
 description = "Build the sdist and wheel into dist/"
 run = ["rm -rf dist", "uv build"]
+{%- endif %}
 
 [tasks.check]
 description = "Run all linter and formatter checks with hk against changed files"

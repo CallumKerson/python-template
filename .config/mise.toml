@@ -1,4 +1,8 @@
+[deps.uv]
+auto = true
+
 [settings]
+experimental = true
 lockfile = true
 
 [tasks.check]

@@ -3,9 +3,6 @@
   "extends": ["config:best-practices", ":automergeStableNonMajor", ":automergeDigest"],
   "schedule": ["every 2 weeks on saturday and sunday"],
   "prConcurrentLimit": 3,
-  "copier": {
-    "managerFilePatterns": ["/(^|/)\\.config/copier-answers\\.ya?ml$/"]
-  },
   "customManagers": [
     {
       "customType": "regex",

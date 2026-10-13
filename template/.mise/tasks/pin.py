@@ -4,8 +4,8 @@
 Pin the unversioned placeholders python-template writes to concrete versions.
 
 Only placeholders are touched: tools set to "latest" in mise.toml, the LATEST
-sentinel in hk.pkl, a bare uv_build and Python dependencies without a version.
-Versions already pinned are left alone.
+sentinel in hk.pkl, a bare uv_build, Python dependencies without a version and
+the unversioned Renovate preset. Versions already pinned are left alone.
 """
 
 import re
@@ -18,6 +18,8 @@ HK_PKL = Path("hk.pkl")
 PYPROJECT = Path("pyproject.toml")
 UV_LOCK = Path("uv.lock")
 WORKFLOWS = Path(".github/workflows")
+RENOVATE_JSON = Path(".github/renovate.json")
+RENOVATE_PRESET = "CallumKerson/renovate-config"
 
 
 def run(*args: str) -> str:
@@ -93,6 +95,18 @@ def pin_python_dependencies() -> None:
     run("mise", "exec", "--", "uv", "sync")
 
 
+def pin_renovate_preset() -> None:
+    """Pin the shared Renovate preset to its latest release tag."""
+    text = RENOVATE_JSON.read_text()
+    if f'"github>{RENOVATE_PRESET}"' not in text:
+        return
+    refs = run("git", "ls-remote", "--tags", "--refs", f"https://github.com/{RENOVATE_PRESET}.git")
+    tags = re.findall(r"refs/tags/(v(\d+)\.(\d+)\.(\d+))$", refs, re.MULTILINE)
+    tag = max(tags, key=lambda t: tuple(map(int, t[1:])))[0]
+    RENOVATE_JSON.write_text(text.replace(f'"github>{RENOVATE_PRESET}"', f'"github>{RENOVATE_PRESET}#{tag}"'))
+    print(f"Pinned {RENOVATE_PRESET} to {tag} in {RENOVATE_JSON}")
+
+
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
     pin_mise_tools()
@@ -103,6 +117,8 @@ def main() -> None:
     if WORKFLOWS.is_dir():
         # Pins actions given by tag, e.g. actions/checkout@v6, to their commit
         run("mise", "exec", "pinact@latest", "--", "pinact", "run")
+    if RENOVATE_JSON.is_file():
+        pin_renovate_preset()
     run("mise", "lock")
 
 

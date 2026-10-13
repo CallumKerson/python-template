@@ -1,18 +1,53 @@
-name: ci
+---
+name: CI
 
 on:
   pull_request:
-  merge_group:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+
+env:
+  UV_CACHE_DIR: /tmp/.uv-cache
+  MISE_TASK_OUTPUT: keep-order
 
 jobs:
+  lint-title:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        with:
+          validateSingleCommit: true
+          validateSingleCommitMatchesPrTitle: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   ci:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: ${{ github.event_name != 'push' }}
+
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/.uv-cache
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+            uv-${{ runner.os }}
+
       - run: mise run ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: uv cache prune --ci

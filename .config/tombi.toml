@@ -1,0 +1,12 @@
+# Sort tables, tasks and tools alphabetically, which puts the long [tools]
+# table last. Ordering rules only apply to schema-matched documents, so mise's
+# schema is set explicitly.
+[[schemas]]
+path = "https://mise.jdx.dev/schema/mise.json"
+include = [".config/mise.toml"]
+
+[[schemas.overrides]]
+targets = ["", "tasks", "tools"]
+
+[schemas.overrides.format.rules]
+table-keys-order = "ascending"

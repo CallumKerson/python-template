@@ -1,5 +1,5 @@
 # Written by copier
-ignore = [".config/copier-answers.yaml"]
+ignore = [".copier-answers.yaml"]
 
 [files]
 yaml = ["*.yaml", "*.yml"]

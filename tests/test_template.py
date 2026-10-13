@@ -14,7 +14,7 @@ import pytest
 from copier import run_copy
 
 TEMPLATE = Path(__file__).parent.parent
-ANSWERS_FILE = ".config/copier-answers.yaml"
+ANSWERS_FILE = ".copier-answers.yaml"
 IGNORED = shutil.ignore_patterns(".git", ".venv", "*_cache", "__pycache__")
 
 

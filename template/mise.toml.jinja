@@ -56,7 +56,7 @@ run = ["git rev-parse --git-dir >/dev/null 2>&1 || git init --quiet", "mise run 
 
 [tasks.update-template]
 description = "Pull in changes from the python-template copier template"
-run = ["uvx copier update --skip-answered --answers-file .config/copier-answers.yaml", "mise run pin"]
+run = ["uvx copier update --skip-answered --answers-file .copier-answers.yaml", "mise run pin"]
 
 [tasks.build]
 description = "Build the sdist and wheel into dist/"

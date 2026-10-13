@@ -21,7 +21,7 @@ It asks for:
 - the minimum Python version;
 - whether mise should run `uv sync` automatically.
 
-Answers are saved to `.config/copier-answers.yaml`. Pull in later template
+Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.
 
 ## Versions belong to the project

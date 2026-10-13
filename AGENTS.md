@@ -24,7 +24,7 @@ tasks, and `template/` is what gets copied.
 - Don't add copier `_tasks`: they make copier and Renovate need `--trust`.
 - Write each mise tool as its own `[tools.<name>]` table, so `copier update`
   can add or remove one without conflicting with neighbouring pins.
-- Renovate ignores `template/`; this repo's own tools in the root `mise.toml`
+- Renovate ignores `template/`; this repo's own tools in `.config/mise.toml`
   are pinned and updated by Renovate.
 - Files ending `.jinja` are rendered; others are copied as they are.
 - Generated projects must pass their own `mise run check-all` and

@@ -38,7 +38,7 @@ uv_auto_sync:
   default: false
 
 _subdirectory: template
-_answers_file: .config/copier-answers.yaml
+_answers_file: .copier-answers.yaml
 
 # No _tasks: copier would need --trust, which Renovate can't pass
 _message_after_copy: |

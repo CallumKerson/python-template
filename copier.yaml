@@ -1,7 +1,7 @@
 project_name:
   type: str
   help: What is your project name?
-  default: "{{ _copier_conf.dst_path | basename | lower | replace(' ', '-') }}"
+  default: "{{ _copier_conf.dst_path | realpath | basename | lower | replace(' ', '-') }}"
   validator: >-
     {% if not (project_name | regex_search('^[a-z][a-z0-9\\-]+$')) %}
     project_name must start with a letter, followed one or more letters, digits or dashes all lowercase.

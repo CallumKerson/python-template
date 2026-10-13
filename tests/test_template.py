@@ -74,6 +74,14 @@ def tool_version(value: str | dict) -> str:
     return value["version"] if isinstance(value, dict) else value
 
 
+def test_project_name_defaults_to_directory(template: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project = tmp_path / "Demo App"
+    project.mkdir()
+    monkeypatch.chdir(project)
+    run_copy(str(template), ".", defaults=True)
+    assert "project_name: demo-app\n" in (project / ANSWERS_FILE).read_text()
+
+
 @pytest.mark.parametrize("github", [False, True], ids=["local", "github"])
 @pytest.mark.parametrize("project_type", ["library", "cli"])
 def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool) -> None:

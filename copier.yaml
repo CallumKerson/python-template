@@ -40,6 +40,11 @@ uv_auto_sync:
 _subdirectory: template
 _answers_file: .copier-answers.yaml
 
+# Example code is the project's once it exists, on copy and update
+_skip_if_exists:
+  - "src/{{ package_name }}/*.py"
+  - "tests/test_{{ package_name }}.py"
+
 # No _tasks: copier would need --trust, which Renovate can't pass
 _message_after_copy: |
   Run `mise run setup` in {{ _copier_conf.dst_path }} to pin versions and install the git hooks.

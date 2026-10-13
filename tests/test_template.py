@@ -98,6 +98,8 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     mise_toml.write_text(mise_toml.read_text().replace(ruff.format(pinned_ruff), ruff.format("0.15.0")))
     pyproject = project / "pyproject.toml"
     pyproject.write_text(pyproject.read_text().replace("dev = [\n", 'dev = [\n  "pytest-cov>=7.0.0",\n'))
+    init = project / "src/demo_app/__init__.py"
+    init.write_text('"""Code the project wrote."""\n')
     commit_all(project, "build: pin ruff and add pytest-cov")
 
     # The template adds a tool and changes another file
@@ -107,6 +109,8 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     )
     readme = template / "template/README.md.jinja"
     readme.write_text(readme.read_text() + "\nA new paragraph from the template.\n")
+    example = template / "template/src/{{ package_name }}/__init__.py.jinja"
+    example.write_text(example.read_text() + "\n# A change to the example code\n")
     commit_all(template, "feat: add shellcheck")
     run(template, "git", "tag", "v2.0.0")
 
@@ -117,5 +121,6 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     assert re.fullmatch(r"\d+(\.\d+)+", tool_version(tools["shellcheck"]))
     assert '"pytest-cov>=7.0.0"' in pyproject.read_text()
     assert "A new paragraph from the template." in (project / "README.md").read_text()
+    assert init.read_text() == '"""Code the project wrote."""\n'
     assert not list(project.rglob("*.rej"))
     assert "<<<<<<<" not in mise_toml.read_text() + pyproject.read_text()

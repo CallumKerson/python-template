@@ -1,3 +1,40 @@
+[settings]
+lockfile = true
+
+[tasks.check]
+description = "Run all linter and formatter checks with hk against changed files"
+run = "hk check --no-fail-fast"
+
+[tasks.check-all]
+description = "Run all linter and formatter checks with hk against all files"
+run = "hk check --all --no-fail-fast"
+
+[tasks.check-auto]
+description = "Check all files on main, or only changed files on other branches"
+run = '''
+if [ "$(git branch --show-current)" = "main" ]; then
+  mise run check-all
+else
+  mise run check-pr
+fi
+'''
+
+[tasks.check-pr]
+description = "Run all checks against files changed since main"
+run = ["git fetch origin main", "hk check --from-ref origin/main --to-ref HEAD --no-fail-fast"]
+
+[tasks.ci]
+description = "Run the checks and tests CI runs"
+depends = ["check-auto"]
+
+[tasks.fix]
+description = "Fix all linter and formatter issues with hk against changed files"
+run = "hk fix --no-fail-fast"
+
+[tasks.fix-all]
+description = "Fix all linter and formatter issues with hk against all files"
+run = "hk fix --all --no-fail-fast"
+
 [tools]
 actionlint = "1.7.12"
 "aqua:owenlamont/ryl" = "0.24.0"
@@ -13,40 +50,3 @@ ty = "0.0.86"
 typos = "1.51.1"
 uv = "0.13.0"
 zizmor = "1.30.1"
-
-[tasks.check]
-description = "Run all linter and formatter checks with hk against changed files"
-run = "hk check --no-fail-fast"
-
-[tasks.check-all]
-description = "Run all linter and formatter checks with hk against all files"
-run = "hk check --all --no-fail-fast"
-
-[tasks.fix]
-description = "Fix all linter and formatter issues with hk against changed files"
-run = "hk fix --no-fail-fast"
-
-[tasks.fix-all]
-description = "Fix all linter and formatter issues with hk against all files"
-run = "hk fix --all --no-fail-fast"
-
-[tasks.check-pr]
-description = "Run all checks against files changed since main"
-run = ["git fetch origin main", "hk check --from-ref origin/main --to-ref HEAD --no-fail-fast"]
-
-[tasks.check-auto]
-description = "Check all files on main, or only changed files on other branches"
-run = '''
-if [ "$(git branch --show-current)" = "main" ]; then
-  mise run check-all
-else
-  mise run check-pr
-fi
-'''
-
-[tasks.ci]
-description = "Run the checks and tests CI runs"
-depends = ["check-auto"]
-
-[settings]
-lockfile = true

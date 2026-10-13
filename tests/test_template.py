@@ -15,6 +15,11 @@ from copier import run_copy
 
 TEMPLATE = Path(__file__).parent.parent
 ANSWERS_FILE = ".copier-answers.yaml"
+# Longer than every line limit, to check generated files wrap it
+LONG_DESCRIPTION = (
+    "Check that a description longer than any line limit, with hyphenated words like copier-template, "
+    "is wrapped in every generated file"
+)
 IGNORED = shutil.ignore_patterns(".git", ".venv", "*_cache", "__pycache__")
 
 
@@ -51,7 +56,8 @@ def template(tmp_path: Path) -> Path:
 def generate(template: Path, project: Path, **data: object) -> None:
     """Generate a project from the template with default answers, then set it up."""
     # Without unsafe=True, copier refuses templates with tasks, as it would for Renovate
-    run_copy(str(template), project, data={"project_name": "demo-app", **data}, defaults=True)
+    data = {"project_name": "demo-app", "project_description": LONG_DESCRIPTION, **data}
+    run_copy(str(template), project, data=data, defaults=True)
     run(project, "mise", "trust", "--quiet")
     run(project, "mise", "run", "setup")
     commit_all(project, "feat: initial commit")

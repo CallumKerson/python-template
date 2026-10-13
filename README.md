@@ -24,6 +24,29 @@ It asks for:
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.
 
+## Adopting an existing project
+
+Copy the template over the project from a clean git tree, answering the
+questions to match it, then review every change before running setup:
+
+```sh
+cd my-project
+uvx copier copy --overwrite gh:CallumKerson/python-template .
+git checkout HEAD -- uv.lock    # before setup, so it doesn't re-resolve
+```
+
+Copier leaves existing code in `src/<package>/` and the example test alone,
+but replaces other files whole. Put back what was the project's own:
+
+- dependencies, scripts, entry points and pytest settings in
+  `pyproject.toml`;
+- project-specific `.gitignore` entries, hk excludes, mise tasks and tools;
+- anything else in `README.md` and `AGENTS.md`.
+
+Delete any new example code or tests the project doesn't need; copier won't
+add them back on update. Then run `mise run setup`, `mise run check-all` and
+`mise run test`.
+
 ## Versions belong to the project
 
 The template never sets tool or dependency versions. It writes them

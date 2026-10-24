@@ -48,7 +48,7 @@ The `{{ project_name }}` CLI is built with
   [CallumKerson/renovate-config](https://github.com/CallumKerson/renovate-config)
   preset, pinned to a release in `.github/renovate.json`. Put rules only this
   repo needs there too.
-- zizmor rejects actions not pinned to a commit. Pin new ones with
+- jactionlint rejects actions not pinned to a commit. Pin new ones with
   `mise exec pinact@latest -- pinact run`.
 {%- else %}
 - There is no CI; hk hooks are the only gate.

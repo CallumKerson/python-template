@@ -65,11 +65,6 @@ run = "uv run pytest"
 description = "Pull in changes from the python-template copier template"
 run = ["uvx copier update --skip-answered --answers-file .copier-answers.yaml", "mise run pin"]
 
-{% if github -%}
-[tools.actionlint]
-version = "latest"
-
-{% endif -%}
 [tools."aqua:owenlamont/ryl"]
 version = "latest"
 {%- if github %}
@@ -80,6 +75,11 @@ version = "latest"
 
 [tools.hk]
 version = "latest"
+{%- if github %}
+
+[tools.jactionlint]
+version = "latest"
+{%- endif %}
 {%- if github %}
 
 [tools.oxfmt]
@@ -112,8 +112,3 @@ version = "latest"
 
 [tools.uv]
 version = "latest"
-{%- if github %}
-
-[tools.zizmor]
-version = "latest"
-{%- endif %}

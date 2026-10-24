@@ -1,14 +1,13 @@
-amends "package://github.com/jdx/hk/releases/download/v2.5.0/hk@2.5.0#/Config.pkl"
+amends "package://github.com/jdx/hk/releases/download/v2.7.0/hk@2.7.0#/Config.pkl"
 
-import "package://github.com/jdx/hk/releases/download/v2.5.0/hk@2.5.0#/Builtins.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.7.0/hk@2.7.0#/Builtins.pkl"
 
-min_hk_version = "2.5.0"
+min_hk_version = "2.7.0"
 
 // .config/mise/locks holds the lockfiles mise writes for npm tools like oxfmt
 exclude = List(".config/mise/locks/**", "CHANGELOG.md", "LICENSE")
 
 local linters = new Mapping<String, Step> {
-  ["actionlint"] = Builtins.actionlint
   ["byte_order_marker"] = Builtins.byte_order_marker
   ["check_added_large_files"] = Builtins.check_added_large_files
   ["check_case_conflict"] = Builtins.check_case_conflict
@@ -17,6 +16,7 @@ local linters = new Mapping<String, Step> {
   ["check_symlinks"] = Builtins.check_symlinks
   ["detect_private_key"] = Builtins.detect_private_key
   ["fix_smart_quotes"] = Builtins.fix_smart_quotes
+  ["jactionlint"] = Builtins.jactionlint
   // oxfmt formats many languages; only JSON isn't covered by another linter
   ["json"] = (Builtins.oxfmt) {
     glob = List("**/*.json", "**/*.jsonc")
@@ -36,7 +36,6 @@ local linters = new Mapping<String, Step> {
   ["ty"] = Builtins.ty
   ["typos"] = Builtins.typos
   ["yaml"] = Builtins.ryl
-  ["zizmor"] = Builtins.zizmor
 }
 
 local commit_message_check = new Mapping<String, Step> {

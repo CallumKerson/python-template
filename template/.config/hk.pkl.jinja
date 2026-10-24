@@ -10,9 +10,6 @@ exclude = List(".config/mise/locks/**", "CHANGELOG.md", "LICENSE")
 {%- endif %}
 
 local linters = new Mapping<String, Step> {
-{%- if github %}
-  ["actionlint"] = Builtins.actionlint
-{%- endif %}
   ["byte_order_marker"] = Builtins.byte_order_marker
   ["check_added_large_files"] = Builtins.check_added_large_files
   ["check_case_conflict"] = Builtins.check_case_conflict
@@ -22,6 +19,7 @@ local linters = new Mapping<String, Step> {
   ["detect_private_key"] = Builtins.detect_private_key
   ["fix_smart_quotes"] = Builtins.fix_smart_quotes
 {%- if github %}
+  ["jactionlint"] = Builtins.jactionlint
   // Other file types have their own linters
   ["json"] = (Builtins.oxfmt) {
     glob = List("**/*.json", "**/*.jsonc")
@@ -42,9 +40,6 @@ local linters = new Mapping<String, Step> {
   ["ty"] = Builtins.ty
   ["typos"] = Builtins.typos
   ["yaml"] = Builtins.ryl
-{%- if github %}
-  ["zizmor"] = Builtins.zizmor
-{%- endif %}
 }
 
 local commit_message_check = new Mapping<String, Step> {

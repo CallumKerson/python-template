@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/CallumKerson/python-template/compare/v0.4.0...v0.5.0) (2026-10-25)
+
+
+### ✨ Features
+
+* lint generated projects' workflows with jactionlint ([07bc0ae](https://github.com/CallumKerson/python-template/commit/07bc0aebd5853241cc0e9c1a39e476ca696a89d2))
+
 ## [0.4.0](https://github.com/CallumKerson/python-template/compare/v0.3.0...v0.4.0) (2026-10-13)
 
 

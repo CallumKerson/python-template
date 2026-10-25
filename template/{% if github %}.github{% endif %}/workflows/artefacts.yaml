@@ -1,0 +1,45 @@
+---
+name: Release Artefacts
+
+on:
+  release:
+    types:
+      - created
+
+# Queue releases rather than cancel one half-way through
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+  queue: max
+
+permissions: {}
+
+env:
+  MISE_TASK_OUTPUT: keep-order
+
+jobs:
+  # Attach the sdist and wheel to each release, so jobs can install a release
+  # of a private repository with `gh release download`
+  build-artefacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # Uploads the artefacts to the release
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # No cache, so nothing a pull request saved can end up in a release
+      - uses: jdx/mise-action@v4
+        with:
+          cache: false
+
+      - run: mise run build
+
+      - name: Upload artefacts to release
+        run: gh release upload "${RELEASE_TAG_NAME}" ./dist/*.tar.gz ./dist/*.whl
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}

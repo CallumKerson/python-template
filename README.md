@@ -22,7 +22,8 @@ It asks for:
 - whether it's a library or a [cyclopts](https://cyclopts.readthedocs.io) CLI;
 - whether to add GitHub CI, Renovate and release-please. release-please uses
   a GitHub App's token, read from the `RELEASE_APP_CLIENT_ID` variable and
-  `RELEASE_APP_PRIVATE_KEY` secret, so release pull requests run CI.
+  `RELEASE_APP_PRIVATE_KEY` secret, so release pull requests run CI. Each
+  release gets its sdist and wheel attached.
 
 Answers are saved to `.copier-answers.yaml`. Pull in later template
 changes from the project with `mise run update-template`.

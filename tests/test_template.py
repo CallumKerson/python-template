@@ -102,6 +102,7 @@ def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool
     if github:
         for workflow in (project / ".github/workflows").iterdir():
             assert "@v" not in workflow.read_text().replace("# v", ""), workflow.name
+        assert (project / ".github/workflows/artefacts.yaml").is_file()
         renovate = json.loads((project / ".github/renovate.json").read_text())
         assert re.fullmatch(r"github>CallumKerson/renovate-config#v\d+\.\d+\.\d+", renovate["extends"][0])
 
@@ -109,6 +110,8 @@ def test_copy(template: Path, tmp_path: Path, project_type: str, *, github: bool
     shutil.rmtree(project / ".venv")
     run(project, "mise", "run", "check-all")
     run(project, "mise", "run", "test")
+    run(project, "mise", "run", "build")
+    assert {p.suffix for p in (project / "dist").iterdir()} >= {".whl", ".gz"}
     if project_type == "cli":
         assert run(project, "uv", "run", "demo-app", "hello", "--name", "Ada") == "Hello, Ada!\n"
 

@@ -38,7 +38,9 @@ commit messages follow
 pull request from conventional commits on `main`. It uses a GitHub App's token,
 so release pull requests run CI. The repository needs the App's client ID in
 the `RELEASE_APP_CLIENT_ID` variable and its private key in the
-`RELEASE_APP_PRIVATE_KEY` secret.
+`RELEASE_APP_PRIVATE_KEY` secret. Each release gets its sdist and wheel
+attached, so it can be installed with `gh release download` even while the
+repository is private.
 {%- endif %}
 
 This project was created from

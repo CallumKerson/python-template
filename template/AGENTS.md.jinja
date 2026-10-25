@@ -15,9 +15,8 @@ The `{{ project_name }}` CLI is built with
   committing.
 {%- if project_type == 'cli' %}
 - `uv run {{ project_name }} <args>` runs the CLI.
-{%- else %}
-- `mise run build` builds the sdist and wheel into `dist/`.
 {%- endif %}
+- `mise run build` builds the sdist and wheel into `dist/`.
 
 ## Layout
 {% if project_type == 'cli' %}
@@ -43,7 +42,8 @@ The `{{ project_name }}` CLI is built with
 {%- if github %}
 - GitHub Actions runs `mise run ci` on pull requests and `main`. On `main`,
   release-please runs once CI passes and makes releases from conventional
-  commits.
+  commits, and the Release Artefacts workflow attaches each release's sdist
+  and wheel.
 - Renovate updates dependencies using the shared
   [CallumKerson/renovate-config](https://github.com/CallumKerson/renovate-config)
   preset, pinned to a release in `.github/renovate.json`. Put rules only this

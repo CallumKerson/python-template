@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/CallumKerson/python-template/compare/v0.6.0...v0.6.1) (2026-10-25)
+
+
+### 🐛 Bug Fixes
+
+* lock tools limited by os only for their platforms ([#32](https://github.com/CallumKerson/python-template/issues/32)) ([731efd4](https://github.com/CallumKerson/python-template/commit/731efd43a4b96f61682164e132e625506a38c085))
+
 ## [0.6.0](https://github.com/CallumKerson/python-template/compare/v0.5.0...v0.6.0) (2026-10-25)
 
 

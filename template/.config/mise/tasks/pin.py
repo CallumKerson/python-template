@@ -28,6 +28,16 @@ UV_LOCK = Path("uv.lock")
 WORKFLOWS = Path(".github/workflows")
 RENOVATE_JSON = Path(".github/renovate.json")
 RENOVATE_PRESET = "CallumKerson/renovate-config"
+# The platforms mise locks a new lockfile for
+PLATFORMS = (
+    "linux-arm64",
+    "linux-arm64-musl",
+    "linux-x64",
+    "linux-x64-musl",
+    "macos-arm64",
+    "macos-x64",
+    "windows-x64",
+)
 
 
 def run(*args: str) -> str:
@@ -129,6 +139,32 @@ def pin_renovate_preset() -> None:
     print(f"Pinned {RENOVATE_PRESET} to {tag} in {RENOVATE_JSON}")
 
 
+def allowed_platforms(systems: list[str]) -> list[str]:
+    """Return the platforms a tool's os setting, such as ["linux", "macos/arm64"], allows."""
+    allowed = []
+    for platform in PLATFORMS:
+        system, arch = platform.split("-")[:2]
+        matches = {system, f"{system}/{arch}"} | ({"unix"} if system != "windows" else set())
+        if matches & set(systems):
+            allowed.append(platform)
+    return allowed
+
+
+def lock_tools() -> None:
+    """
+    Lock the mise tools, each only for the platforms its os setting allows.
+
+    mise lock ignores os, so it would lock a macOS-only tool for every platform,
+    which for a conda tool such as ffmpeg adds thousands of lines.
+    """
+    tools = tomllib.loads(MISE_TOML.read_text()).get("tools", {})
+    limited = {name: value["os"] for name, value in tools.items() if isinstance(value, dict) and "os" in value}
+    run("mise", "lock", *(name for name in tools if name not in limited))
+    for name, systems in limited.items():
+        platforms = allowed_platforms([systems] if isinstance(systems, str) else systems)
+        run("mise", "lock", name, "--platform", ",".join(platforms))
+
+
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
     use_gh_token()
@@ -142,7 +178,7 @@ def main() -> None:
         run("mise", "exec", "pinact@latest", "--", "pinact", "run")
     if RENOVATE_JSON.is_file():
         pin_renovate_preset()
-    run("mise", "lock")
+    lock_tools()
 
 
 if __name__ == "__main__":

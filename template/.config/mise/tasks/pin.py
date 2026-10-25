@@ -155,8 +155,11 @@ def lock_tools() -> None:
     Lock the mise tools, each only for the platforms its os setting allows.
 
     mise lock ignores os, so it would lock a macOS-only tool for every platform,
-    which for a conda tool such as ffmpeg adds thousands of lines.
+    which for a conda tool such as ffmpeg adds thousands of lines. It only adds
+    platforms, never removes them, so main stops other mise commands writing
+    the lockfile first.
     """
+    os.environ.pop("MISE_LOCKFILE")
     tools = tomllib.loads(MISE_TOML.read_text()).get("tools", {})
     limited = {name: value["os"] for name, value in tools.items() if isinstance(value, dict) and "os" in value}
     run("mise", "lock", *(name for name in tools if name not in limited))
@@ -168,6 +171,9 @@ def lock_tools() -> None:
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
     use_gh_token()
+    # mise install and exec lock a tool for every platform, even one its os
+    # setting skips, so only lock_tools writes the lockfile
+    os.environ["MISE_LOCKFILE"] = "false"
     pin_mise_tools()
     run("mise", "install", "--quiet")
     pin_hk_pkl()

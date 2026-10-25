@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/CallumKerson/python-template/compare/v0.5.0...v0.6.0) (2026-10-25)
+
+
+### ✨ Features
+
+* attach each release's sdist and wheel ([#30](https://github.com/CallumKerson/python-template/issues/30)) ([40922d8](https://github.com/CallumKerson/python-template/commit/40922d881c823670d7a170ff8819ec967e0a7010))
+
 ## [0.5.0](https://github.com/CallumKerson/python-template/compare/v0.4.0...v0.5.0) (2026-10-25)
 
 

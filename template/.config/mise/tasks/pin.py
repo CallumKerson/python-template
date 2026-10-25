@@ -25,9 +25,20 @@ MISE_TOML = Path(".config/mise.toml")
 HK_PKL = Path(".config/hk.pkl")
 PYPROJECT = Path("pyproject.toml")
 UV_LOCK = Path("uv.lock")
+MISE_LOCK = Path(".config/mise.lock")
 WORKFLOWS = Path(".github/workflows")
 RENOVATE_JSON = Path(".github/renovate.json")
 RENOVATE_PRESET = "CallumKerson/renovate-config"
+# The platforms mise locks a new lockfile for
+PLATFORMS = (
+    "linux-arm64",
+    "linux-arm64-musl",
+    "linux-x64",
+    "linux-x64-musl",
+    "macos-arm64",
+    "macos-x64",
+    "windows-x64",
+)
 
 
 def run(*args: str) -> str:
@@ -129,6 +140,49 @@ def pin_renovate_preset() -> None:
     print(f"Pinned {RENOVATE_PRESET} to {tag} in {RENOVATE_JSON}")
 
 
+def allowed_platforms(systems: list[str]) -> list[str]:
+    """Return the platforms a tool's os setting, such as ["linux", "macos/arm64"], allows."""
+    allowed = []
+    for platform in PLATFORMS:
+        system, arch = platform.split("-")[:2]
+        matches = {system, f"{system}/{arch}"} | ({"unix"} if system != "windows" else set())
+        if matches & set(systems):
+            allowed.append(platform)
+    return allowed
+
+
+def remove_locked_platforms(name: str, platforms: list[str]) -> None:
+    """Remove a tool's mise.lock entries for platforms other than those given."""
+    header = re.compile(rf'\[tools\."?{re.escape(name)}"?\."platforms\.([a-z0-9-]+)"\]')
+    lines, skipping = [], False
+    for line in MISE_LOCK.read_text().splitlines(keepends=True):
+        if line.startswith("["):
+            match = header.match(line)
+            skipping = bool(match) and match.group(1) not in platforms
+        if not skipping:
+            lines.append(line)
+    MISE_LOCK.write_text("".join(lines))
+
+
+def lock_tools() -> None:
+    """
+    Lock the mise tools, each only for the platforms its os setting allows.
+
+    mise ignores os when it locks: mise lock locks every platform, and other mise
+    commands lock a tool even where os skips it. For a conda tool such as ffmpeg
+    that adds thousands of lines. mise lock never removes a platform, so this
+    removes the others first; locking again then drops conda packages nothing
+    uses.
+    """
+    tools = tomllib.loads(MISE_TOML.read_text()).get("tools", {})
+    limited = {name: value["os"] for name, value in tools.items() if isinstance(value, dict) and "os" in value}
+    run("mise", "lock", *(name for name in tools if name not in limited))
+    for name, systems in limited.items():
+        platforms = allowed_platforms([systems] if isinstance(systems, str) else systems)
+        remove_locked_platforms(name, platforms)
+        run("mise", "lock", name, "--platform", ",".join(platforms))
+
+
 def main() -> None:
     """Pin every placeholder, then lock the tools."""
     use_gh_token()
@@ -142,7 +196,7 @@ def main() -> None:
         run("mise", "exec", "pinact@latest", "--", "pinact", "run")
     if RENOVATE_JSON.is_file():
         pin_renovate_preset()
-    run("mise", "lock")
+    lock_tools()
 
 
 if __name__ == "__main__":

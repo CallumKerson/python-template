@@ -74,6 +74,11 @@ def tool_version(value: str | dict) -> str:
     return value["version"] if isinstance(value, dict) else value
 
 
+def locked_platforms(entry: dict) -> set[str]:
+    """Return the platforms a mise.lock tool entry is locked for."""
+    return {key.removeprefix("platforms.") for key in entry if key.startswith("platforms.")}
+
+
 def test_project_name_defaults_to_directory(template: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     project = tmp_path / "Demo App"
     project.mkdir()
@@ -125,12 +130,14 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     pinned_ruff = tool_version(mise_tools(project)["ruff"])
     ruff = '[tools.ruff]\nversion = "{}"'
     mise_toml.write_text(mise_toml.read_text().replace(ruff.format(pinned_ruff), ruff.format("0.15.0")))
+    # A tool only some platforms need
+    mise_toml.write_text(mise_toml.read_text() + '\n[tools.jq]\nversion = "1.8.2"\nos = ["macos/arm64"]\n')
     pyproject = project / "pyproject.toml"
     pyproject.write_text(pyproject.read_text().replace("dev = [\n", 'dev = [\n  "pytest-cov>=7.0.0",\n'))
     run(project, "mise", "exec", "--", "uv", "lock")
     init = project / "src/demo_app/__init__.py"
     init.write_text('"""Code the project wrote."""\n')
-    commit_all(project, "build: pin ruff and add pytest-cov")
+    commit_all(project, "build: pin ruff, add pytest-cov and add jq on Apple silicon")
 
     # The template adds a tool and changes another file
     tools = template / "template/.config/mise.toml.jinja"
@@ -149,6 +156,9 @@ def test_update_keeps_project_versions(template: Path, tmp_path: Path) -> None:
     tools = mise_tools(project)
     assert tool_version(tools["ruff"]) == "0.15.0"
     assert re.fullmatch(r"\d+(\.\d+)+", tool_version(tools["shellcheck"]))
+    lock = tomllib.loads((project / ".config/mise.lock").read_text())["tools"]
+    assert locked_platforms(lock["jq"][0]) == {"macos-arm64"}
+    assert "linux-x64" in locked_platforms(lock["ruff"][0])
     assert '"pytest-cov>=7.0.0"' in pyproject.read_text()
     assert "A new paragraph from the template." in (project / "README.md").read_text()
     assert init.read_text() == '"""Code the project wrote."""\n'

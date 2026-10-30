@@ -1,10 +1,10 @@
 # Written by copier
-ignore = [".copier-answers.yaml"]
+exclude = [".copier-answers.yaml"]
 
 [files]
 yaml = ["*.yaml", "*.yml"]
 
-[rules]
+[lint.rules]
 anchors = "enable"
 braces = "enable"
 brackets = "enable"
@@ -18,15 +18,15 @@ new-line-at-end-of-file = "enable"
 new-lines = "enable"
 trailing-spaces = "enable"
 
-[rules.comments]
+[lint.rules.comments]
 level = "warning"
 
-[rules.comments-indentation]
+[lint.rules.comments-indentation]
 level = "warning"
 
-[rules.line-length]
+[lint.rules.line-length]
 max = 120
 
-[rules.truthy]
+[lint.rules.truthy]
 level = "warning"
 check-keys = false

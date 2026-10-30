@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/CallumKerson/python-template/compare/v0.6.1...v0.6.2) (2026-10-30)
+
+
+### 🐛 Bug Fixes
+
+* use ryl's current config keys ([#34](https://github.com/CallumKerson/python-template/issues/34)) ([8b7b267](https://github.com/CallumKerson/python-template/commit/8b7b2675b08e06a211ed50dedf074a5429449e01))
+
 ## [0.6.1](https://github.com/CallumKerson/python-template/compare/v0.6.0...v0.6.1) (2026-10-25)
 
 

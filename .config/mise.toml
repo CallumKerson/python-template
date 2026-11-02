@@ -63,7 +63,7 @@ depends = ["aube"]
 version = "0.32.1"
 
 [tools.ruff]
-version = "0.17.0"
+version = "0.17.2"
 
 [tools.rumdl]
 version = "0.2.79"

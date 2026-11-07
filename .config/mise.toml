@@ -75,7 +75,7 @@ version = "0.11.0"
 version = "1.8.1"
 
 [tools.ty]
-version = "0.0.86"
+version = "0.0.95"
 
 [tools.typos]
 version = "1.51.1"

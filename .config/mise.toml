@@ -53,7 +53,7 @@ version = "v2.8.5"
 version = "2.7.0"
 
 [tools.jactionlint]
-version = "2.3.0"
+version = "v2.5.0"
 
 [tools.oxfmt]
 version = "0.72.0"

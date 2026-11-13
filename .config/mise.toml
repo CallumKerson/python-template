@@ -44,7 +44,7 @@ description = "Generate projects from the template and check them; needs network
 run = "uv run pytest"
 
 [tools."aqua:owenlamont/ryl"]
-version = "0.26.1"
+version = "0.29.0"
 
 [tools.aube]
 version = "v2.8.5"

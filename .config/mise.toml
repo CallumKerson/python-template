@@ -47,7 +47,7 @@ run = "uv run pytest"
 version = "0.29.0"
 
 [tools.aube]
-version = "v2.8.5"
+version = "v2.9.0"
 
 [tools.hk]
 version = "2.7.0"

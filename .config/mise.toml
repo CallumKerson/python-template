@@ -81,4 +81,4 @@ version = "0.0.100"
 version = "1.51.1"
 
 [tools.uv]
-version = "0.13.6"
+version = "0.13.7"
